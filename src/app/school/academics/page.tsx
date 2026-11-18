@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Academic setup" };
 
-const TABS: ResourceKey[] = ["years", "terms", "programmes", "classes", "departments", "subjects", "houses"];
+const TABS: ResourceKey[] = ["years", "terms", "programmes", "classes", "departments", "subjects", "houses", "periods"];
 
 export default async function AcademicsPage({ searchParams }: { searchParams: Promise<{ tab?: string; edit?: string }> }) {
   const { school } = await requireSchoolPermission("academics.read");

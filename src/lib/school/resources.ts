@@ -5,7 +5,7 @@ import { z } from "zod";
  * (serialisable to client forms); the server builds a zod schema from it, always sets school_id
  * from the verified school context, and RLS enforces `academics.manage` on every write.
  */
-export type FieldType = "text" | "textarea" | "number" | "date" | "select" | "checkbox";
+export type FieldType = "text" | "textarea" | "number" | "date" | "time" | "select" | "checkbox";
 
 export type ResourceField = {
   name: string;
@@ -32,7 +32,7 @@ export type ResourceDef = {
   exclusiveFlag?: string;
 };
 
-export type ResourceKey = "years" | "terms" | "departments" | "programmes" | "classes" | "subjects" | "houses";
+export type ResourceKey = "years" | "terms" | "departments" | "programmes" | "classes" | "subjects" | "houses" | "periods";
 
 export const RESOURCES: Record<ResourceKey, ResourceDef> = {
   years: {
@@ -125,6 +125,20 @@ export const RESOURCES: Record<ResourceKey, ResourceDef> = {
       { name: "is_core", label: "Core subject", type: "checkbox" },
     ],
   },
+  periods: {
+    key: "periods",
+    table: "timetable_periods",
+    singular: "period",
+    plural: "Periods",
+    description: "The school day: lesson periods and breaks, in order. Used by the timetable.",
+    orderBy: [{ column: "starts_at", ascending: true }],
+    fields: [
+      { name: "name", label: "Name", type: "text", required: true, max: 40, hint: "e.g. Period 1, Break" },
+      { name: "starts_at", label: "Starts", type: "time", required: true },
+      { name: "ends_at", label: "Ends", type: "time", required: true },
+      { name: "is_break", label: "Break (no lessons)", type: "checkbox" },
+    ],
+  },
   houses: {
     key: "houses",
     table: "school_houses",
@@ -167,6 +181,9 @@ export function resourceSchema(def: ResourceDef) {
         s = f.required ? n : z.preprocess((v) => (v === "" || v == null ? null : v), n.nullable());
         break;
       }
+      case "time":
+        s = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d(:00)?$/, `Enter a valid ${f.label.toLowerCase()} time`).transform((v) => v.slice(0, 5));
+        break;
       case "date": {
         const d = z.iso.date({ message: `Enter a valid ${f.label.toLowerCase()} date` });
         s = f.required ? d : z.preprocess((v) => (v === "" ? null : v), d.nullable());
@@ -185,6 +202,9 @@ export function resourceSchema(def: ResourceDef) {
     shape[f.name] = s;
   }
   let schema: z.ZodType = z.object(shape);
+  if (def.fields.some((f) => f.name === "starts_at") && def.fields.some((f) => f.name === "ends_at")) {
+    schema = (schema as z.ZodObject).refine((v: Record<string, unknown>) => String(v.ends_at) > String(v.starts_at), { path: ["ends_at"], message: "The end time must be after the start time" });
+  }
   if (def.fields.some((f) => f.name === "starts_on") && def.fields.some((f) => f.name === "ends_on")) {
     schema = (schema as z.ZodObject).refine((v: Record<string, unknown>) => !v.starts_on || !v.ends_on || String(v.ends_on) > String(v.starts_on), {
       path: ["ends_on"],

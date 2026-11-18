@@ -22,7 +22,7 @@ export const schoolCounts = cache(async (schoolId: string) => {
     count("school_departments"),
     count("school_houses"),
     members().not("roles.key", "in", "(student,parent)"),
-    members().eq("roles.key", "student"),
+    supabase.from("students").select("id", { count: "exact", head: true }).eq("school_id", schoolId).eq("status", "active"),
     supabase.from("schools").select("status, onboarding_completed_at").eq("id", schoolId).single(),
     supabase.from("school_branding").select("primary_color, secondary_color, motto, logo_path").eq("school_id", schoolId).maybeSingle(),
     supabase.from("school_settings").select("confirmed_at").eq("school_id", schoolId).maybeSingle(),
@@ -38,6 +38,7 @@ export const schoolCounts = cache(async (schoolId: string) => {
     programmes: programmes.count ?? 0,
     classes: classes.count ?? 0,
     staff: staff.count ?? 0,
+    students: students.count ?? 0,
     settingsReviewed: Boolean(settings.data?.confirmed_at),
     launched: Boolean(school.data?.onboarding_completed_at),
   };

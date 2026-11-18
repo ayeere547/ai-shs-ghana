@@ -43,6 +43,7 @@ export async function ResourceManager({ resource, schoolId, canManage, editId, h
     if (v == null || v === "") return <span className="text-muted-foreground">—</span>;
     if (f.type === "checkbox") return v ? <Badge tone="info">{f.label.replace(/^(Current|Core) .*/, "$1")}</Badge> : <span className="text-muted-foreground">—</span>;
     if (f.type === "date") return formatDate(String(v));
+    if (f.type === "time") return String(v).slice(0, 5);
     if (f.type === "select") return (f.options ?? options[f.optionsFrom ?? ""] ?? []).find((o) => o.value === v)?.label ?? "—";
     return String(v);
   };

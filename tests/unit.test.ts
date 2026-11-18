@@ -120,7 +120,7 @@ describe("resource engine", () => {
 });
 
 describe("onboarding", () => {
-  const base: OnboardingCounts = { status: "active", hasLogoOrMotto: false, brandingCustomised: false, years: 1, currentYear: true, terms: 3, programmes: 2, classes: 4, staff: 1, settingsReviewed: false, launched: false };
+  const base: OnboardingCounts = { status: "active", hasLogoOrMotto: false, brandingCustomised: false, years: 1, currentYear: true, terms: 3, programmes: 2, classes: 4, staff: 1, students: 0, settingsReviewed: false, launched: false };
 
   it("can launch once required steps are done, regardless of optional ones", () => {
     expect(canLaunch(onboardingSteps(base))).toBe(true);
@@ -137,8 +137,10 @@ describe("onboarding", () => {
     expect(steps.filter((s) => s.number >= 4).every((s) => !s.available)).toBe(true);
   });
 
-  it("never marks student import as available before Phase 2", () => {
-    expect(onboardingSteps(base).find((s) => s.key === "students")).toMatchObject({ available: false, done: false });
+  it("student import is optional, available once active, and done when students exist", () => {
+    expect(onboardingSteps(base).find((s) => s.key === "students")).toMatchObject({ available: true, done: false, required: false });
+    expect(onboardingSteps({ ...base, students: 3 }).find((s) => s.key === "students")!.done).toBe(true);
+    expect(onboardingSteps({ ...base, status: "pending_verification" }).find((s) => s.key === "students")!.available).toBe(false);
   });
 });
 
@@ -155,7 +157,7 @@ describe("roles and navigation", () => {
     const labels = teacher.flatMap((s) => s.items.map((i) => i.label));
     expect(labels).toContain("Academic setup");
     expect(labels).not.toContain("Settings");
-    expect(labels).not.toContain("Staff & members");
+    expect(labels).not.toContain("Members & access");
     expect(platformNavigation(new Set(["platform.dashboard", "analytics.national"])).flatMap((s) => s.items.map((i) => i.label))).not.toContain("Platform staff");
   });
 });

@@ -58,7 +58,7 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
             <p className="text-sm text-muted-foreground">{step.description}</p>
           </div>
           {params.error && <Alert tone="danger">The school could not be launched. Make sure the required steps are complete.</Alert>}
-          <StepBody step={step} steps={steps} schoolId={school.schoolId} rank={school.rank} status={school.schoolStatus} editId={params.edit} href={href} />
+          <StepBody step={step} steps={steps} counts={counts} schoolId={school.schoolId} rank={school.rank} status={school.schoolStatus} editId={params.edit} href={href} />
           <div className="flex justify-between border-t border-border pt-4">
             {step.number > 1 ? <ButtonLink href={href(step.number - 1)} variant="ghost">Back</ButtonLink> : <span />}
             {step.number < 10 && <ButtonLink href={href(step.number + 1)} variant="secondary">Next step</ButtonLink>}
@@ -75,7 +75,7 @@ function StepIcon({ step }: { step: OnboardingStep }) {
   return <Circle className="h-4 w-4 shrink-0" aria-label="To do" />;
 }
 
-async function StepBody({ step, steps, schoolId, rank, status, editId, href }: { step: OnboardingStep; steps: OnboardingStep[]; schoolId: string; rank: number; status: string; editId?: string; href: (n: number, extra?: string) => string }) {
+async function StepBody({ step, steps, counts, schoolId, rank, status, editId, href }: { step: OnboardingStep; steps: OnboardingStep[]; counts: { students: number }; schoolId: string; rank: number; status: string; editId?: string; href: (n: number, extra?: string) => string }) {
   if (step.number <= 3) {
     return (
       <Card>
@@ -130,6 +130,18 @@ async function StepBody({ step, steps, schoolId, rank, status, editId, href }: {
           <CardHeader title="Invite staff" description="Add your assistant heads, administrators and teachers. You can manage everyone later under Staff & members." />
           <CardBody>
             <InviteForm roles={assignableSchoolRoles(rank).filter((r) => r.staff).map(({ key, label }) => ({ key, label }))} />
+          </CardBody>
+        </Card>
+      );
+    case "students":
+      return (
+        <Card>
+          <CardBody className="space-y-3 text-sm">
+            <p>{counts.students > 0 ? `${counts.students} active students on record.` : "No students yet."} Import a CSV file — every row is checked and duplicates are flagged before anything is saved — or admit students one at a time.</p>
+            <div className="flex flex-wrap gap-2">
+              <ButtonLink href="/school/students/import">Import students</ButtonLink>
+              <ButtonLink href="/school/students/new" variant="secondary">Admit one student</ButtonLink>
+            </div>
           </CardBody>
         </Card>
       );

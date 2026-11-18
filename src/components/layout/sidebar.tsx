@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  CalendarDays, ClipboardCheck, CreditCard, GraduationCap, LayoutDashboard, LifeBuoy, ListChecks, School, ScrollText, Settings,
+  BarChart3, BookOpen, BriefcaseBusiness, FileCheck2, CalendarDays, ClipboardCheck, CreditCard, GraduationCap, LayoutDashboard, LifeBuoy, ListChecks, School, ScrollText, Settings,
   ShieldCheck, Sparkles, UserRound, Users, X, type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { BrandMark } from "./brand";
 
 const ICONS: Record<string, LucideIcon> = {
-  CalendarDays, ClipboardCheck, CreditCard, GraduationCap, LayoutDashboard, LifeBuoy, ListChecks, School, ScrollText, Settings,
+  BarChart3, BookOpen, BriefcaseBusiness, FileCheck2, CalendarDays, ClipboardCheck, CreditCard, GraduationCap, LayoutDashboard, LifeBuoy, ListChecks, School, ScrollText, Settings,
   ShieldCheck, Sparkles, UserRound, Users,
 };
 

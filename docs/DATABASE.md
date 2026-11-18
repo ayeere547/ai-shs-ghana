@@ -50,11 +50,30 @@ in filename order (`supabase db push` or `npm run db:migrate`).
 | `public_school_directory(...)` / `public_plans()` | anon-safe public reads (only active + opted-in schools) |
 | `log_audit(...)` | audited actions from the app |
 
+## Phase 2 tables (implemented — `20261118000001_core_school_management.sql`)
+
+| Table | Notes |
+|---|---|
+| `students` | per-school `student_number`; `user_id` links the student's own account (set only via `link_account`) |
+| `guardians`, `student_guardians` | `can_view_records` controls a parent's portal access per child |
+| `student_status_history` | written only by `change_student_status` / `promote_class` |
+| `staff` | covers the brief's `staff`/`teachers` (`is_teaching`); `user_id` set only via `link_staff_account` |
+| `teacher_assignments` | covers `teacher_subjects` + `teacher_classes`; one teacher per class×subject |
+| `subject_registrations` | |
+| `timetable_periods`, `timetable_slots` | unique constraints forbid class, teacher and room double-booking |
+| `attendance` | one record per student per day; trigger checks the student is in the class |
+| `grading_schemes`, `grading_bands` | school-defined; one default scheme |
+| `assessments`, `assessment_scores` | trigger enforces max score and class membership |
+| `result_publications` | gate for student/parent visibility of scores |
+| `school_sequences` | per-school counters for `next_school_number()` |
+
+Key helpers: `teaches(school, class, subject)`, `is_student_self()`, `is_guardian_of()`, `can_enter_scores()`, `assessment_published()`.
+Account-link columns (`user_id`) are excluded from column grants, so they can only change through audited RPCs.
+
 ## Planned tables by phase
 
 | Phase | Tables |
 |---|---|
-| 2 Core school management | `students`, `staff`, `teachers`, `guardians`, `parents`, `student_guardians`, `student_enrolments`, `subject_registrations`, `teacher_subjects`, `teacher_classes`, `timetables`, `timetable_periods`, `attendance`, `grading_schemes`, `student_results`, `report_cards`, import batches |
 | 3 Learning | `learning_materials`, `digital_courses`, `course_modules`, `lessons`, `learning_progress`, `assignments`, `assignment_submissions`, `assessments`, `examinations`, `examination_questions`, `examination_attempts`, `examination_answers`, `question_banks` |
 | 4 AI | `knowledge_documents`, `knowledge_chunks` (+`embedding vector`), `ai_tutor_conversations`, `ai_tutor_messages`, `ai_usage_logs`, `ai_prompt_versions`, `study_plans` |
 | 5 Parents & operations | `fee_structures`, `student_invoices`, `student_payments`, `payment_records`, `expenditure_records`, `school_budgets`, `dormitories`, `rooms`, `boarding_allocations`, `library_books`, `library_transactions`, `inventory_items`, `inventory_transactions`, `school_assets`, `maintenance_requests`, `school_events`, `school_clubs`, `school_sports`, `school_vehicles`, `health_records`, `clinic_visits`, `emergency_contacts`, `announcements`, `messages`, `notification_preferences` |

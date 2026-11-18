@@ -21,7 +21,19 @@ roles. Row Level Security alone decides each outcome. Covered:
 * Logo uploads restricted to the uploader's own school folder.
 * Public directory/profile/stats expose only active, opted-in, non-sample data.
 
-## Unit tests (`tests/unit.test.ts`)
+## Phase 2 RLS tests (`tests/rls-phase2.test.ts`)
+* School B cannot read or create School A's students.
+* A student sees only their own record and attendance; a parent sees only linked children, and loses access when it's paused.
+* Teachers read students but can't edit them; HR manages staff but can't see students; students can't read the staff directory.
+* Teachers take attendance and create assessments/scores only for classes and subjects they're assigned; scores above the maximum or for students outside the class are rejected.
+* Students and parents see scores only after results are published; only `results.publish` holders can publish.
+* The database rejects double-booking a teacher; teachers can't edit the timetable.
+* Status history, promotion and graduation only through RPCs; account links (`user_id`) can't be written directly.
+
+## Unit tests (`tests/unit.test.ts`, `tests/phase2-unit.test.ts`)
+Phase 2 adds: CSV parsing and import validation/duplicate detection, the timetable generator (no clashes, spreading, overload reporting, fixed slots), and results maths (weighting, incomplete subjects, grade boundaries, tied positions, safe CSV export).
+
+## Phase 1 unit tests
 Validation (registration, auth, open-redirect guard), the config-driven resource engine, onboarding
 step logic, role/navigation filtering, pagination and search sanitising.
 

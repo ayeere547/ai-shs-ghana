@@ -20,7 +20,18 @@ export type SchoolPermission =
   | "members.manage"
   | "academics.read"
   | "academics.manage"
-  | "school.audit.read";
+  | "school.audit.read"
+  | "students.read"
+  | "students.manage"
+  | "staff.read"
+  | "staff.manage"
+  | "timetable.manage"
+  | "attendance.record"
+  | "attendance.manage"
+  | "assessments.record"
+  | "assessments.manage"
+  | "results.read"
+  | "results.publish";
 
 export type PlatformRoleKey = "super_admin" | "platform_admin" | "support_officer" | "finance_admin" | "data_analyst";
 

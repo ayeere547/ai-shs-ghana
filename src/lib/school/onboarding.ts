@@ -9,6 +9,7 @@ export type OnboardingCounts = {
   programmes: number;
   classes: number;
   staff: number;
+  students: number;
   settingsReviewed: boolean;
   launched: boolean;
 };
@@ -34,7 +35,7 @@ export function onboardingSteps(c: OnboardingCounts): OnboardingStep[] {
     { number: 5, key: "calendar", title: "Academic year & terms", description: "The current academic year and its terms.", done: c.currentYear && c.terms > 0, required: true, available: active },
     { number: 6, key: "structure", title: "Programmes & classes", description: "What the school offers and its class groups.", done: c.programmes > 0 && c.classes > 0, required: true, available: active },
     { number: 7, key: "staff", title: "Add staff", description: "Invite teachers and administrators.", done: c.staff > 1, required: false, available: active },
-    { number: 8, key: "students", title: "Import students", description: "CSV/Excel import with validation and duplicate detection.", done: false, required: false, available: false, note: "Arrives with the student management module (Phase 2)." },
+    { number: 8, key: "students", title: "Import students", description: "Admit students one by one or import a CSV with validation and duplicate detection.", done: c.students > 0, required: false, available: active },
     { number: 9, key: "settings", title: "School settings", description: "School days, form levels, period length and portals.", done: c.settingsReviewed, required: false, available: active },
     { number: 10, key: "launch", title: "Launch", description: "Open the school dashboard to your staff.", done: c.launched, required: true, available: active },
   ];

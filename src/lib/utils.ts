@@ -22,3 +22,6 @@ export function safeNextPath(next: string | null | undefined, fallback = "/app")
   if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) return fallback;
   return next;
 }
+
+/** Today's date (YYYY-MM-DD) in Ghana. */
+export const todayInAccra = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Accra", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());

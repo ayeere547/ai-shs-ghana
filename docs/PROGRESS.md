@@ -12,17 +12,32 @@ Status legend: ✅ done and tested · 🟡 partial · ⏳ not started
 | Database architecture + multi-tenant infrastructure | ✅ | `supabase/migrations/20261117000001_foundation.sql` |
 | RBAC (platform + school scopes, DB-enforced) | ✅ | |
 | School registration → verification | ✅ | `/register-school`, `/platform/schools/[id]` |
-| Onboarding wizard (branding, years/terms, programmes/classes, staff, settings, launch) | ✅ | step 8 (student import) arrives with Phase 2 |
+| Onboarding wizard (branding, years/terms, programmes/classes, staff, settings, launch) | ✅ | all 10 steps live since Phase 2 |
 | Platform administrator dashboard | ✅ | overview, schools, platform staff, audit log |
 | School administrator dashboard | ✅ | overview, onboarding, academics setup, members, settings, audit |
 | Public website | 🟡 | home, features, audience pages, pricing (live plans), directory, about, contact, legal. Help centre content in Phase 7 |
 | RLS + unit tests | ✅ | `npm test` |
 | Verified against a live Supabase project | ⏳ | needs project keys (see INSTALLATION.md) |
 
-## Phase 2 — Core school management ⏳
-Students (admission, profiles, CSV/Excel import with validation + duplicate detection, ID generation,
-transfers, progression, graduation), staff/teachers, subject and class allocation, timetable engine
-with conflict detection, attendance, grading schemes, results.
+## Phase 2 — Core school management ✅ (code-complete 2026-11-18)
+
+| Item | Status | Notes |
+|---|---|---|
+| Student records (admission, profile, edit, auto student numbers) | ✅ | `/school/students` |
+| Guardians, parent account linking, per-guardian record access | ✅ | parents see only linked children (RLS) |
+| CSV import with validation, duplicate detection, preview before commit | ✅ | Excel → save as CSV; native .xlsx not yet supported |
+| Transfers, withdrawal, suspension, class moves, promotion, graduation + history | ✅ | `change_student_status`, `promote_class` RPCs |
+| Subject registration | ✅ | |
+| Staff records, staff numbers, departments, employment status | ✅ | `/school/staff` |
+| Teaching assignments (class × subject × periods/week) | ✅ | drive timetable generation **and** teacher permissions |
+| Timetable: periods, grid by class/teacher, manual edit, automatic generation | ✅ | class/teacher/room clashes blocked by DB constraints |
+| Attendance registers (teachers: own classes only), 7-day trend, dashboard card | ✅ | `/school/attendance` |
+| Assessments + score entry (teachers: own subjects only) | ✅ | `/school/assessments` |
+| Configurable grading schemes (no WAEC/GES scheme assumed) | ✅ | `/school/results/grading` |
+| Results sheet (weighted totals, grades, positions), CSV export, publish/withdraw | ✅ | students/parents see scores only after publication |
+| Onboarding step 8 (import students) | ✅ | |
+| Leave management, staff documents, report cards (PDF) | ⏳ | moved to Phase 3/5 |
+| Verified against a live Supabase project | ⏳ | needs project keys; Docker Desktop not running locally |
 
 ## Phase 3 — Learning management ⏳
 Student and teacher portals, digital classroom, assignments, digital library, examinations and question bank.

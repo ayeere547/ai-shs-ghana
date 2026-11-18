@@ -9,7 +9,7 @@ import { canSchool, requireSchool } from "@/lib/auth/session";
 import { onboardingSteps, progressPercent } from "@/lib/school/onboarding";
 import { schoolCounts } from "@/lib/school/queries";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate } from "@/lib/utils";
+import { formatDate, todayInAccra } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "School dashboard" };
 
@@ -17,13 +17,18 @@ export default async function SchoolDashboard({ searchParams }: { searchParams: 
   const { school } = await requireSchool();
   const { registered, denied, launched } = await searchParams;
   const supabase = await createClient();
-  const [c, { data: current }, { data: activity }] = await Promise.all([
+  const today = todayInAccra();
+  const [c, { data: current }, { data: activity }, { data: todays }] = await Promise.all([
     schoolCounts(school.schoolId),
     supabase.from("academic_terms").select("name, starts_on, ends_on, academic_years(name)").eq("school_id", school.schoolId).eq("is_current", true).maybeSingle<{ name: string; starts_on: string; ends_on: string; academic_years: { name: string } | null }>(),
     canSchool(school, "school.audit.read")
       ? supabase.from("audit_logs").select("id, created_at, summary, action").eq("school_id", school.schoolId).order("created_at", { ascending: false }).limit(6)
       : Promise.resolve({ data: null }),
+    supabase.from("attendance").select("status").eq("school_id", school.schoolId).eq("attendance_date", today).limit(5000),
   ]);
+  const attendanceToday: Record<string, number> = {};
+  for (const a of todays ?? []) attendanceToday[a.status] = (attendanceToday[a.status] ?? 0) + 1;
+  const attendanceTotal = (todays ?? []).length;
   const steps = onboardingSteps(c.onboarding);
   const showOnboarding = !c.onboarding.launched && canSchool(school, "school.settings.manage");
 
@@ -65,8 +70,8 @@ export default async function SchoolDashboard({ searchParams }: { searchParams: 
       )}
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatCard label="Students" value={c.students} icon={UserRound} detail="Student records arrive in Phase 2" />
-        <StatCard label="Staff members" value={c.staff} icon={Users} href={canSchool(school, "members.read") ? "/school/members" : undefined} tone="primary" />
+        <StatCard label="Students" value={c.students} icon={UserRound} detail="active" href={canSchool(school, "students.read") ? "/school/students" : undefined} tone="primary" />
+        <StatCard label="Staff accounts" value={c.staff} icon={Users} href={canSchool(school, "members.read") ? "/school/members" : undefined} />
         <StatCard label="Classes" value={c.classes} icon={School} href="/school/academics?tab=classes" />
         <StatCard label="Programmes" value={c.programmes} icon={Layers} href="/school/academics?tab=programmes" />
         <StatCard label="Subjects" value={c.subjects} icon={BookOpen} href="/school/academics?tab=subjects" />
@@ -77,11 +82,30 @@ export default async function SchoolDashboard({ searchParams }: { searchParams: 
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <CardHeader title="Attendance, assignments and results" />
-          <EmptyState icon={CalendarDays} title="Not available yet">
-            Attendance today, outstanding assignments, upcoming examinations and academic performance appear here once the student, attendance and
-            assessment modules are enabled (development phases 2–3).
-          </EmptyState>
+          <CardHeader
+            title="Attendance today"
+            description={formatDate(today, { dateStyle: "full" })}
+            action={(canSchool(school, "attendance.record") || canSchool(school, "attendance.manage")) && <Link href="/school/attendance" className="text-sm font-medium text-royal hover:underline">Take attendance</Link>}
+          />
+          {attendanceTotal === 0 ? (
+            <EmptyState icon={CalendarDays} title="No registers taken yet today">
+              Teachers take attendance for their classes from the Attendance page. Assignments, examinations and the student portal follow in the next development phase.
+            </EmptyState>
+          ) : (
+            <CardBody>
+              <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {(["present", "late", "absent", "excused"] as const).map((k) => (
+                  <div key={k} className="rounded-md bg-surface-muted p-3">
+                    <dt className="text-xs capitalize text-muted-foreground">{k}</dt>
+                    <dd className="text-xl font-semibold tabular-nums">{attendanceToday[k] ?? 0}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {Math.round((((attendanceToday.present ?? 0) + (attendanceToday.late ?? 0)) / attendanceTotal) * 100)}% of {attendanceTotal} students marked so far are in school.
+              </p>
+            </CardBody>
+          )}
         </Card>
         <Card>
           <CardHeader title="Recent activity" action={activity && <Link href="/school/audit" className="text-sm font-medium text-royal hover:underline">All</Link>} />

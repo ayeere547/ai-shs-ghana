@@ -36,7 +36,8 @@ export function ResourceForm({
     const echoed = state.values?.[name];
     if (echoed !== undefined) return Array.isArray(echoed) ? echoed[0] : echoed;
     const v = initial?.[name];
-    return v == null ? "" : String(v);
+    if (v == null) return "";
+    return fields.find((f) => f.name === name)?.type === "time" ? String(v).slice(0, 5) : String(v);
   };
 
   return (
@@ -68,7 +69,7 @@ export function ResourceForm({
                 ) : f.type === "textarea" ? (
                   <Textarea {...common} defaultValue={value(f.name)} maxLength={f.max} />
                 ) : (
-                  <Input {...common} type={f.type === "number" ? "number" : f.type === "date" ? "date" : "text"} min={f.min} max={f.type === "number" ? f.max : undefined} maxLength={f.type === "text" ? f.max : undefined} defaultValue={value(f.name)} />
+                  <Input {...common} type={f.type === "number" ? "number" : f.type === "date" ? "date" : f.type === "time" ? "time" : "text"} min={f.min} max={f.type === "number" ? f.max : undefined} maxLength={f.type === "text" ? f.max : undefined} defaultValue={value(f.name)} />
                 )}
               </Field>
               {f.type === "select" && f.optionsFrom && list.length === 0 && <p className="mt-1 text-xs text-muted-foreground">Add {f.label.toLowerCase()}s first to link them here.</p>}
