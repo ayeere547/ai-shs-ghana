@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * AI SHS Ghana design tokens. Deep navy primary, royal blue secondary, gold accent on white/light grey.
+ * Light and dark themes share token names so components never hard-code colours.
+ */
+:root {
+  --background: #f6f7f9;
+  --surface: #ffffff;
+  --surface-muted: #eff2f6;
+  --foreground: #0f1b2d;
+  --muted-foreground: #556275;
+  --border: #dfe4ec;
+  --ring: #1d4ed8;
+
+  --primary: #0b2545;
+  --primary-hover: #13315c;
+  --primary-foreground: #ffffff;
+  --primary-soft: #e7edf7;
+
+  --royal: #1d4ed8;
+  --royal-soft: #e8efff;
+  --gold: #b8891a;
+  --gold-soft: #fbf3dd;
+
+  --charcoal: #0b1f3a;
+  --charcoal-foreground: #eef2f8;
+
+  --accent: #15803d;
+  --accent-soft: #e6f4ea;
+  --warning: #a15c00;
+  --warning-soft: #fff4e0;
+  --danger: #b42318;
+  --danger-soft: #fdeceb;
+  --info: #1d4ed8;
+  --info-soft: #e8efff;
+
+  --chart-1: #1d4ed8;
+  --chart-2: #b8891a;
+  --chart-3: #0f766e;
+  --chart-4: #7c3aed;
+  --chart-grid: #dfe4ec;
+}
+
+.dark {
+  --background: #0a1120;
+  --surface: #111a2c;
+  --surface-muted: #172238;
+  --foreground: #e8edf5;
+  --muted-foreground: #9aa8bd;
+  --border: #23314a;
+  --ring: #6b9bff;
+
+  --primary: #3b6fe0;
+  --primary-hover: #5584ea;
+  --primary-foreground: #ffffff;
+  --primary-soft: #16264a;
+
+  --royal: #6b9bff;
+  --royal-soft: #16264a;
+  --gold: #e3b84f;
+  --gold-soft: #33280f;
+
+  --charcoal: #070d19;
+  --charcoal-foreground: #e8edf5;
+
+  --accent: #4ac27a;
+  --accent-soft: #12291c;
+  --warning: #e8a33a;
+  --warning-soft: #33250f;
+  --danger: #f2675d;
+  --danger-soft: #3a1714;
+  --info: #6b9bff;
+  --info-soft: #16264a;
+
+  --chart-1: #6b9bff;
+  --chart-2: #e3b84f;
+  --chart-3: #3fc1b0;
+  --chart-4: #a98be0;
+  --chart-grid: #23314a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-royal: var(--royal);
+  --color-royal-soft: var(--royal-soft);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-charcoal: var(--charcoal);
+  --color-charcoal-foreground: var(--charcoal-foreground);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --radius-lg: 0.625rem;
+  --radius-md: 0.5rem;
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  border-color: var(--border);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
