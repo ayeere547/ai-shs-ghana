@@ -105,7 +105,7 @@ cron URL with the bearer secret) for 10-minute email/SMS delivery.
 | School Billing & plan page: usage vs limits, choose/renew a plan, pay with Paystack (platform account), invoice history | ✅ | `/school/billing` |
 | Offline payments (bank transfer, MoMo, cheque), waivers and direct plan assignment by platform finance staff | ✅ | school page in the platform console |
 | Sponsors and sponsorships: sponsored (100%) and subsidised (partial) plans; fully covered invoices settle at once | ✅ | `/platform/subscriptions?tab=sponsors` |
-| Lifecycle job: renewal invoices 7 days ahead, 14-day grace, then past due (Free limits); lapsed sponsorships end | ✅ | daily cron `/api/cron/subscriptions` |
+| Lifecycle job: renewal invoices 7 days ahead, 14-day grace, then past due (Free limits); lapsed sponsorships end | ✅ | daily cron `/api/cron/daily` |
 | Plan limits: active-student cap enforced in the database | ✅ | staff cap shown, not enforced |
 | Revenue overview, subscriptions and invoices lists | ✅ | `/platform/subscriptions` |
 | Support tickets: any signed-in user; school admins see their school's; internal staff notes; assignment; data-protection requests flagged | ✅ | `/app/support`, `/platform/support` |
@@ -115,5 +115,17 @@ cron URL with the bearer secret) for 10-minute email/SMS delivery.
 | Hubtel as a payment provider; public API / third-party integrations | ⏳ | later — Paystack covers MoMo and cards today |
 | Verified against live Supabase and Paystack | ⏳ | needs keys |
 
-## Phase 7 — Production readiness ⏳
-Security audit, performance, E2E tests (Playwright), backups/DR runbook, deployment, API/admin/user docs.
+## Phase 7 — Production readiness ✅ (code-complete 2026-11-23)
+
+| Item | Status | Notes |
+|---|---|---|
+| Schema security audit as tests: RLS on every table, anon grants, function privileges, `search_path`, school_id locks, FK indexes, private buckets | ✅ | `tests/security-audit.test.ts` — also guards future migrations |
+| Fixes from the audit: anon grants removed from 2 tables; ~50 helper functions no longer callable anonymously; internal/trigger functions closed to users; school_id locks on 13 more tables; indexes for 150 foreign keys | ✅ | `20261123000001_production_hardening.sql` |
+| Content-Security-Policy (plus existing HSTS, frame, referrer headers) | ✅ | `next.config.ts` |
+| Health check for uptime monitoring | ✅ | `/api/health` |
+| Act 843: download my data, account deletion request, configurable retention rules (daily) | ✅ | My account; `/api/cron/daily` |
+| Playwright E2E: public pages (desktop + mobile), accessibility basics, headers, auth guards, API guards | ✅ | 40 tests; signed-in journeys run when `E2E_*` test accounts are set |
+| Deployment guide, operations runbook (backups, restore drill, incidents, breach, key rotation), API reference, admin and user guides | ✅ | `docs/` |
+| Signed-in E2E journeys and a restore drill against a real Supabase project | ⏳ | needs a project (local Docker or staging) |
+| Penetration test by an independent party; legal review of policies; DPC registration | ⏳ | before real students' data is processed |
+| Distributed rate limiting (Redis/Upstash) | ⏳ | current limiter is per server instance |

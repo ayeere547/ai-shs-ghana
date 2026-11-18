@@ -59,3 +59,17 @@ export async function updateTicket(formData: FormData) {
   revalidatePath(`/platform/support/${v.data.ticketId}`);
   revalidatePath("/platform/support");
 }
+
+/** Act 843: asks the platform team to delete the account. Staff verify identity and the schools' record-keeping duties first. */
+export async function requestAccountDeletion(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireSession();
+  const reason = z.string().trim().max(1000).safeParse(formData.get("reason") ?? "");
+  if (formData.get("confirm") !== "on") return { ok: false, message: "Tick the box to confirm." };
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("open_support_ticket", {
+    p_school: null, p_subject: "Request to delete my account", p_category: "data_protection", p_priority: "normal",
+    p_body: `Please delete my AI SHS Ghana account and personal data.${reason.success && reason.data ? `\n\nReason: ${reason.data}` : ""}`,
+  });
+  if (error || !data) return { ok: false, message: friendlyError(error?.message, "Couldn't send the request. Please try again.") };
+  redirect(`/app/support/${data}`);
+}

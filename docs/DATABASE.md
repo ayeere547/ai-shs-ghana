@@ -133,6 +133,11 @@ RPCs: `request_subscription`, `void_subscription_invoice`, `record_subscription_
 (service role), `school_billing_summary`, `open_support_ticket`, `reply_support_ticket`, `update_support_ticket`,
 `national_analytics`, `platform_revenue`. Trigger `students_plan_limit` enforces the active-student cap.
 
+## Phase 7 (`20261123000001_production_hardening.sql`)
+
+No new tables. Least-privilege grants, school_id locks, indexes for every foreign key, the `retention_days`
+platform setting, `apply_retention()` (service role) and `my_data_export()`.
+
 ## Planned tables by phase
 
 | Phase | Tables |

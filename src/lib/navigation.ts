@@ -1,6 +1,6 @@
 import type { PlatformPermission, SchoolPermission } from "@/lib/auth/permissions";
 
-export const CURRENT_PHASE = 6;
+export const CURRENT_PHASE = 7;
 
 export type NavItem = { label: string; href: string; icon: string; phase: number };
 export type NavSection = { title: string; items: NavItem[] };

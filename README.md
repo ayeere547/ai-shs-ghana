@@ -3,7 +3,7 @@
 National multi-school, AI-powered management and learning platform for Ghanaian Senior High Schools.
 Next.js 15 (App Router) · TypeScript · Tailwind v4 · Supabase (Postgres + RLS, Auth, Storage).
 
-**Status:** Phases 1–6 (foundation, school management, learning management, AI, parents & operations, national platform) built and tested — see [docs/PROGRESS.md](docs/PROGRESS.md).
+**Status:** all 7 phases built and tested (foundation, school management, learning, AI, parents & operations, national platform, production readiness). Before real students' data: run against a live Supabase project, legal review and Data Protection Commission registration — see [DEPLOYMENT](docs/DEPLOYMENT.md) and [PROGRESS](docs/PROGRESS.md).
 
 | Doc | |
 |---|---|
@@ -11,7 +11,11 @@ Next.js 15 (App Router) · TypeScript · Tailwind v4 · Supabase (Postgres + RLS
 | [DATABASE](docs/DATABASE.md) | schema, functions, planned tables |
 | [SECURITY](docs/SECURITY.md) | threat model, Act 843 |
 | [INSTALLATION](docs/INSTALLATION.md) | setup, first super admin, deployment |
-| [TESTING](docs/TESTING.md) | RLS + unit tests |
+| [TESTING](docs/TESTING.md) | RLS, security audit, unit and E2E tests |
+| [DEPLOYMENT](docs/DEPLOYMENT.md) | production checklist |
+| [RUNBOOK](docs/RUNBOOK.md) | backups, incidents, key rotation |
+| [API](docs/API.md) | endpoints and database functions |
+| [ADMIN_GUIDE](docs/ADMIN_GUIDE.md) / [USER_GUIDE](docs/USER_GUIDE.md) | platform staff and school users |
 
 ```bash
 npm install

@@ -80,5 +80,21 @@ Phase 2 adds: CSV parsing and import validation/duplicate detection, the timetab
 Validation (registration, auth, open-redirect guard), the config-driven resource engine, onboarding
 step logic, role/navigation filtering, pagination and search sanitising.
 
+## Security audit (`tests/security-audit.test.ts`)
+Whole-schema checks (RLS, grants, function privileges, search_path, school_id locks, FK indexes, buckets) plus
+data export scoping and retention rules.
+
+## End-to-end (Playwright, `e2e/`)
+```bash
+npm run test:e2e                      # builds, starts on :3410, runs desktop + mobile
+PW_CHANNEL=msedge npm run test:e2e    # use installed Edge/Chrome instead of downloading Chromium
+E2E_BASE_URL=https://staging.example npm run test:e2e
+```
+`public.spec.ts` (no database needed): every public page renders with an `h1`, `lang`, alt text, labelled
+form controls, no horizontal scroll and no failed requests; no claims of official endorsement; security
+headers; signed-in areas, cron jobs, webhook and exports refuse anonymous calls; health check leaks nothing.
+`journeys.spec.ts`: headteacher, teacher, parent and platform journeys — skipped unless `E2E_<ROLE>_EMAIL` /
+`E2E_<ROLE>_PASSWORD` test accounts are set (use a staging project, never real users).
+
 ## Not yet covered
-End-to-end browser tests (Playwright) against a live Supabase project — Phase 7.
+Signed-in journeys haven't run against a live Supabase project in this repository's CI; load testing.

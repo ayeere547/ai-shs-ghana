@@ -36,8 +36,8 @@ npm run dev      # http://localhost:3400
 ```
 
 ## 6. Deploy (Vercel)
-Import the repository, set the same environment variables, deploy. Update the Supabase Site URL and
+Full production checklist: [DEPLOYMENT.md](DEPLOYMENT.md). In short: import the repository, set the same environment variables, deploy. Update the Supabase Site URL and
 redirect URLs to the production domain. Put Cloudflare in front for DNS/WAF if desired.
 
 ## Checks before going live
-`npm run typecheck && npm test && npm run build` must all pass.
+`npm run typecheck && npm test && npm run build && npm run test:e2e` must all pass.

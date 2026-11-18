@@ -73,8 +73,26 @@ the Data Protection Commission as a data controller/processor.
   emails only. Data-protection (Act 843) requests are flagged so staff verify identity before acting.
 * **Lapsed payment never deletes data** — the school falls back to Free limits (no new admissions over the cap, no AI).
 
+## Production hardening (Phase 7)
+
+`tests/security-audit.test.ts` checks the whole schema on every test run, so new migrations can't quietly
+weaken it: RLS on every table; anonymous visitors limited to `regions` and public plans plus four public
+directory functions; no user can call internal (`_`), trigger or server-only functions; every SECURITY DEFINER
+function pins `search_path`; school_id can't change on tenant tables; every foreign key is indexed; only the
+logo bucket is public. Default privileges no longer grant new tables/functions to `anon`.
+
+Headers: CSP (`frame-ancestors 'none'`, `object-src 'none'`, scripts/connections limited to the site, Supabase
+and Paystack forms), HSTS, `X-Frame-Options: DENY`, `nosniff`, strict referrer policy, no `X-Powered-By`.
+Known limit: Next.js needs inline bootstrap scripts, so `script-src` includes `'unsafe-inline'`; moving to
+nonces is a follow-up.
+
+Act 843 rights: users download their own data (`my_data_export`), request deletion through a tracked
+data-protection ticket, and retention rules delete stale notifications, delivery logs, abandoned payment
+attempts, old AI usage logs and unflagged tutor chats (configurable; audit and financial records are kept).
+See [RUNBOOK.md](RUNBOOK.md) for breach response.
+
 ## Operational
 
-* Backups: Supabase daily backups + PITR on the paid tier; restore runbook in Phase 7.
+* Backups: Supabase daily backups + PITR on the paid tier; restore drill in [RUNBOOK.md](RUNBOOK.md).
 * Keys: rotate `SUPABASE_SERVICE_ROLE_KEY` and provider keys on staff changes.
 * Rate limiter is in-memory per instance — back it with Redis/Upstash before multi-instance scale.
