@@ -1,6 +1,6 @@
 import type { PlatformPermission, SchoolPermission } from "@/lib/auth/permissions";
 
-export const CURRENT_PHASE = 4;
+export const CURRENT_PHASE = 5;
 
 export type NavItem = { label: string; href: string; icon: string; phase: number };
 export type NavSection = { title: string; items: NavItem[] };
@@ -75,6 +75,18 @@ const SCHOOL_NAV: { title: string; items: SchoolGated[] }[] = [
       { label: "Knowledge base", href: "/school/knowledge", icon: "Library", phase: 4, anyOf: ["knowledge.manage", "ai.teacher_tools"] },
       { label: "Safeguarding", href: "/school/safeguarding", icon: "ShieldCheck", phase: 4, permission: "ai.safeguarding" },
       { label: "AI settings & usage", href: "/school/ai-settings", icon: "Settings", phase: 4, permission: "ai.settings" },
+    ],
+  },
+  {
+    title: "Operations",
+    items: [
+      { label: "Finance", href: "/school/finance", icon: "Wallet", phase: 5, permission: "finance.read" },
+      { label: "Family messages", href: "/school/messages", icon: "MessagesSquare", phase: 5, anyOf: ["parents.message", "classroom.teach"] },
+      { label: "Boarding", href: "/school/boarding", icon: "BedDouble", phase: 5, permission: "boarding.manage" },
+      { label: "Library lending", href: "/school/books", icon: "BookMarked", phase: 5, permission: "library.circulation" },
+      { label: "Stores & assets", href: "/school/inventory", icon: "Package", phase: 5, permission: "inventory.manage" },
+      { label: "Maintenance", href: "/school/maintenance", icon: "Wrench", phase: 5, permission: "school.dashboard" },
+      { label: "Health records", href: "/school/health", icon: "HeartPulse", phase: 5, permission: "health.manage" },
     ],
   },
   {

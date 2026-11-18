@@ -26,7 +26,7 @@ Implemented in Phase 1: data minimisation (registration collects only what verif
 purpose notice + consent on account creation, access logging (audit log), role-based least privilege,
 secure password reset. Scheduled: retention policies and data export/correction/deletion workflows
 (Phase 7), guardian authorisation for student accounts (Phase 2/5), health data restricted to
-`nurse` + explicit permission (Phase 5). Formal legal review by a qualified Ghanaian data-protection
+`nurse` + explicit permission (done in Phase 5, with view logging). Formal legal review by a qualified Ghanaian data-protection
 practitioner is required before processing real students' data; the platform should register with
 the Data Protection Commission as a data controller/processor.
 
@@ -46,6 +46,18 @@ the Data Protection Commission as a data controller/processor.
   approves or publishes them. Generated questions are labelled AI-generated, never official WAEC.
 * **Honesty:** answers cite knowledge-base sources; uncited answers are labelled general explanations.
 * **Cost control:** per-school monthly allowances (Free plan = none), per-student daily limits, usage logs.
+
+## Parents, payments and health (Phase 5)
+
+* **Guardians** see only children linked to them with `can_view_records`, and only published results.
+* **Payments:** the browser never marks anything paid. Paystack webhooks are HMAC-SHA512 checked, then
+  every reference is re-verified with Paystack's API; the amount and currency must match the intent and
+  completion is idempotent. Only the server (service role) can complete an online payment. Manual
+  payments and reversals are audited; reversals keep the original record.
+* **Health data** is visible only to roles with `health.manage` (the nurse by default). Each view of a
+  student's health record is written to the audit log. Families see only visits marked as shared.
+* **Notifications:** email/SMS go through a server-only outbox; users choose channels; SMS text is
+  short and avoids sensitive detail (it links back to the app).
 
 ## Operational
 

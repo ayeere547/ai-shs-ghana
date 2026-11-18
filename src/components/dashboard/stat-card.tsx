@@ -11,9 +11,12 @@ export function StatCard({
   detail,
   tone = "neutral",
   href,
+  display,
 }: {
   label: string;
   value: number | null;
+  /** Pre-formatted value (e.g. a currency amount) shown instead of `value`. */
+  display?: string;
   icon: LucideIcon;
   detail?: string;
   tone?: "neutral" | "primary" | "success" | "warning";
@@ -33,7 +36,7 @@ export function StatCard({
           <Icon className="h-4 w-4" aria-hidden />
         </span>
       </div>
-      <p className="mt-2 text-2xl font-semibold tabular-nums tracking-tight">{formatNumber(value)}</p>
+      <p className="mt-2 text-2xl font-semibold tabular-nums tracking-tight">{display ?? formatNumber(value)}</p>
       {detail && <p className="mt-1 text-xs text-muted-foreground">{detail}</p>}
     </Card>
   );

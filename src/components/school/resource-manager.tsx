@@ -4,7 +4,7 @@ import Link from "next/link";
 import { deleteResource } from "@/app/school/academics/actions";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
 import { Badge, Card, CardBody, CardHeader, EmptyState, Table, Td, Th } from "@/components/ui/primitives";
-import { RESOURCES, type ResourceDef, type ResourceKey } from "@/lib/school/resources";
+import { formatMoney, RESOURCES, type ResourceDef, type ResourceKey } from "@/lib/school/resources";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
 
@@ -29,10 +29,11 @@ async function loadOptions(def: ResourceDef, schoolId: string) {
  * Lists a school's records of one type and (for managers) offers add / edit / delete.
  * Rows are read with the user's session, so RLS limits them to the current school.
  */
-export async function ResourceManager({ resource, schoolId, canManage, editId, hrefFor }: { resource: ResourceKey; schoolId: string; canManage: boolean; editId?: string; hrefFor: (editId?: string) => string }) {
+export async function ResourceManager({ resource, schoolId, canManage, editId, hrefFor, filter }: { resource: ResourceKey; schoolId: string; canManage: boolean; editId?: string; hrefFor: (editId?: string) => string; filter?: Record<string, string> }) {
   const def = RESOURCES[resource];
   const supabase = await createClient();
   let query = supabase.from(def.table).select("*").eq("school_id", schoolId);
+  for (const [k, v] of Object.entries(filter ?? {})) query = query.eq(k, v);
   for (const o of def.orderBy) query = query.order(o.column, { ascending: o.ascending });
   const [{ data }, options] = await Promise.all([query.limit(500).returns<Row[]>(), loadOptions(def, schoolId)]);
   const rows = data ?? [];
@@ -44,6 +45,7 @@ export async function ResourceManager({ resource, schoolId, canManage, editId, h
     if (f.type === "checkbox") return v ? <Badge tone="info">{f.label.replace(/^(Current|Core) .*/, "$1")}</Badge> : <span className="text-muted-foreground">—</span>;
     if (f.type === "date") return formatDate(String(v));
     if (f.type === "time") return String(v).slice(0, 5);
+    if (f.type === "money") return f.name === "quantity" || f.name === "reorder_level" ? Number(v).toLocaleString() : formatMoney(v);
     if (f.type === "select") return (f.options ?? options[f.optionsFrom ?? ""] ?? []).find((o) => o.value === v)?.label ?? "—";
     return String(v);
   };
@@ -58,7 +60,7 @@ export async function ResourceManager({ resource, schoolId, canManage, editId, h
           <Table>
             <thead>
               <tr>
-                {listFields.map((f) => <Th key={f.name}>{f.label}</Th>)}
+                {listFields.map((f) => <Th key={f.name}>{f.listLabel ?? f.label}</Th>)}
                 {canManage && <Th className="text-right"><span className="sr-only">Actions</span></Th>}
               </tr>
             </thead>
@@ -69,13 +71,13 @@ export async function ResourceManager({ resource, schoolId, canManage, editId, h
                   {canManage && (
                     <Td className="whitespace-nowrap text-right">
                       <div className="flex justify-end gap-1">
-                        <Link href={hrefFor(r.id)} className="inline-flex h-8 items-center gap-1 rounded-md px-2 text-sm text-muted-foreground hover:bg-surface-muted hover:text-foreground" aria-label={`Edit ${String(r.name)}`}>
+                        <Link href={hrefFor(r.id)} className="inline-flex h-8 items-center gap-1 rounded-md px-2 text-sm text-muted-foreground hover:bg-surface-muted hover:text-foreground" aria-label={`Edit ${String(r.name ?? r.title ?? r.description ?? r.tag ?? "record")}`}>
                           <Pencil className="h-3.5 w-3.5" /> Edit
                         </Link>
                         <form action={deleteResource}>
                           <input type="hidden" name="resource" value={resource} />
                           <input type="hidden" name="id" value={r.id} />
-                          <ConfirmSubmit title={`Delete ${def.singular}?`} description={`“${String(r.name)}” will be removed. Linked records keep working but lose this link.`} confirmLabel="Delete">
+                          <ConfirmSubmit title={`Delete ${def.singular}?`} description={`“${String(r.name ?? r.title ?? r.description ?? r.tag ?? "")}” will be removed.`} confirmLabel="Delete">
                             Delete
                           </ConfirmSubmit>
                         </form>

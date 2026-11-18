@@ -24,7 +24,7 @@ export default async function AppHome({ searchParams }: { searchParams: Promise<
   // Send single-destination users straight to their workspace.
   if (!denied) {
     if (session.platform && session.memberships.length === 0) redirect("/platform");
-    if (!session.platform && session.memberships.length === 1 && session.memberships[0].schoolStatus === "active") redirect(session.memberships[0].role === "student" ? "/student" : "/school");
+    if (!session.platform && session.memberships.length === 1 && session.memberships[0].schoolStatus === "active") redirect(session.memberships[0].role === "student" ? "/student" : session.memberships[0].role === "parent" ? "/parent" : "/school");
   }
 
   const supabase = await createClient();

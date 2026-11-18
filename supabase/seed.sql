@@ -112,3 +112,27 @@ insert into public.grading_bands (school_id, scheme_id, grade, min_score, max_sc
   ('a0000000-0000-4000-8000-000000000001', 'f0000000-0000-4000-8000-000000000001', 'D', 50, 59.99, 'Credit', 4),
   ('a0000000-0000-4000-8000-000000000001', 'f0000000-0000-4000-8000-000000000001', 'E', 40, 49.99, 'Pass', 5),
   ('a0000000-0000-4000-8000-000000000001', 'f0000000-0000-4000-8000-000000000001', 'F', 0, 39.99, 'Fail', 6);
+
+-- ---------------------------------------------------------------------------------------
+-- Phase 5 sample data (Sample Ridge SHS). Amounts are illustrative, not real fee levels.
+-- ---------------------------------------------------------------------------------------
+insert into public.fee_items (school_id, name, amount, residency) values
+  ('a0000000-0000-4000-8000-000000000001', 'PTA levy (sample)', 50.00, null),
+  ('a0000000-0000-4000-8000-000000000001', 'Exam and stationery (sample)', 80.00, null),
+  ('a0000000-0000-4000-8000-000000000001', 'Boarding upkeep (sample)', 300.00, 'boarding');
+
+insert into public.dormitories (id, school_id, name, gender) values
+  ('f1000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001', 'Sample Boys'' Dorm', 'boys'),
+  ('f1000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000001', 'Sample Girls'' Dorm', 'girls');
+insert into public.dorm_rooms (school_id, dormitory_id, name, beds) values
+  ('a0000000-0000-4000-8000-000000000001', 'f1000000-0000-4000-8000-000000000001', 'Room 1', 12),
+  ('a0000000-0000-4000-8000-000000000001', 'f1000000-0000-4000-8000-000000000001', 'Room 2', 12),
+  ('a0000000-0000-4000-8000-000000000001', 'f1000000-0000-4000-8000-000000000002', 'Room 1', 12);
+
+insert into public.library_books (school_id, title, author, copies, shelf) values
+  ('a0000000-0000-4000-8000-000000000001', 'Sample Core Mathematics Textbook', 'Sample Author', 3, 'M-1'),
+  ('a0000000-0000-4000-8000-000000000001', 'Sample English Reader', 'Sample Author', 2, 'E-2');
+
+insert into public.inventory_items (school_id, name, category, unit, quantity, reorder_level) values
+  ('a0000000-0000-4000-8000-000000000001', 'Exercise books (sample)', 'stationery', 'pieces', 400, 100),
+  ('a0000000-0000-4000-8000-000000000001', 'Chalk boxes (sample)', 'stationery', 'boxes', 30, 10);

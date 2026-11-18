@@ -5,6 +5,9 @@ import { Card, CardBody, CardHeader, PageHeader } from "@/components/ui/primitiv
 import { requireSession } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
+import { isEmailConfigured, isSmsConfigured } from "@/lib/notify/channels";
+
+import { NotificationForm } from "./notification-form";
 import { ProfileForm } from "./profile-form";
 
 export const metadata: Metadata = { title: "My account" };
@@ -12,7 +15,10 @@ export const metadata: Metadata = { title: "My account" };
 export default async function AccountPage() {
   const session = await requireSession();
   const supabase = await createClient();
-  const { data: profile } = await supabase.from("profiles").select("full_name, phone").eq("id", session.userId).single();
+  const [{ data: profile }, { data: prefs }] = await Promise.all([
+    supabase.from("profiles").select("full_name, phone").eq("id", session.userId).single(),
+    supabase.from("notification_preferences").select("email_enabled, sms_enabled, sms_phone, categories").eq("user_id", session.userId).maybeSingle(),
+  ]);
 
   return (
     <>
@@ -22,6 +28,12 @@ export default async function AccountPage() {
           <CardHeader title="Personal details" description="Shown to administrators of the schools you belong to." />
           <CardBody>
             <ProfileForm fullName={profile?.full_name ?? ""} phone={profile?.phone ?? ""} />
+          </CardBody>
+        </Card>
+        <Card className="lg:row-span-2">
+          <CardHeader title="Notifications" description="How AI SHS Ghana keeps you informed." />
+          <CardBody>
+            <NotificationForm prefs={prefs ?? { email_enabled: true, sms_enabled: false, sms_phone: null, categories: {} }} emailAvailable={isEmailConfigured()} smsAvailable={isSmsConfigured()} />
           </CardBody>
         </Card>
         <Card>

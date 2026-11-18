@@ -46,7 +46,7 @@ export function ResourceForm({
       {id && <input type="hidden" name="id" value={id} />}
       {state.message && <Alert tone={state.ok ? "success" : "danger"}>{state.message}</Alert>}
       <div className="grid gap-4 sm:grid-cols-2">
-        {fields.map((f) => {
+        {fields.filter((f) => !(id && f.createOnly)).map((f) => {
           const err = state.errors?.[f.name];
           const common = { id: `${resource}-${f.name}`, name: f.name, required: f.required, "aria-invalid": err ? true : undefined };
           if (f.type === "checkbox") {
@@ -69,7 +69,7 @@ export function ResourceForm({
                 ) : f.type === "textarea" ? (
                   <Textarea {...common} defaultValue={value(f.name)} maxLength={f.max} />
                 ) : (
-                  <Input {...common} type={f.type === "number" ? "number" : f.type === "date" ? "date" : f.type === "time" ? "time" : "text"} min={f.min} max={f.type === "number" ? f.max : undefined} maxLength={f.type === "text" ? f.max : undefined} defaultValue={value(f.name)} />
+                  <Input {...common} type={f.type === "number" || f.type === "money" ? "number" : f.type === "date" ? "date" : f.type === "time" ? "time" : "text"} step={f.type === "money" ? "0.01" : undefined} min={f.min} max={f.type === "number" || f.type === "money" ? f.max : undefined} maxLength={f.type === "text" ? f.max : undefined} defaultValue={value(f.name)} />
                 )}
               </Field>
               {f.type === "select" && f.optionsFrom && list.length === 0 && <p className="mt-1 text-xs text-muted-foreground">Add {f.label.toLowerCase()}s first to link them here.</p>}

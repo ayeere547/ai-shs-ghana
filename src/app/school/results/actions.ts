@@ -4,16 +4,20 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireSchoolPermission } from "@/lib/auth/session";
+import { classUsers, notifyUsers } from "@/lib/notify";
 import { createClient } from "@/lib/supabase/server";
 import { fieldErrors, type FormState } from "@/lib/validation/auth";
 import { friendlyDbError } from "@/lib/validation/school";
 
 export async function setPublication(formData: FormData) {
-  await requireSchoolPermission("results.publish", { write: true });
+  const { school } = await requireSchoolPermission("results.publish", { write: true });
   const input = z.object({ termId: z.uuid(), classId: z.uuid(), publish: z.enum(["1", "0"]) }).safeParse(Object.fromEntries(formData));
   if (!input.success) return;
   const supabase = await createClient();
-  await supabase.rpc("publish_results", { p_term: input.data.termId, p_class: input.data.classId, p_publish: input.data.publish === "1" });
+  const { error } = await supabase.rpc("publish_results", { p_term: input.data.termId, p_class: input.data.classId, p_publish: input.data.publish === "1" });
+  if (!error && input.data.publish === "1") {
+    await notifyUsers({ schoolId: school.schoolId, userIds: await classUsers(input.data.classId), category: "results", title: "Term results published", body: "End-of-term results are now available.", link: "/student/results" });
+  }
   revalidatePath("/school/results");
 }
 

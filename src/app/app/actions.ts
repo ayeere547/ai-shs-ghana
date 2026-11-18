@@ -16,7 +16,7 @@ export async function switchSchool(formData: FormData) {
   const membership = session.memberships.find((m) => m.schoolId === schoolId);
   if (!membership) redirect("/app?denied=1");
   (await cookies()).set(ACTIVE_SCHOOL_COOKIE, schoolId, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 60 * 60 * 24 * 180 });
-  redirect(membership.role === "student" ? "/student" : "/school");
+  redirect(membership.role === "student" ? "/student" : membership.role === "parent" ? "/parent" : "/school");
 }
 
 export async function markAllNotificationsRead() {
@@ -45,4 +45,21 @@ export async function updateProfile(_prev: FormState, formData: FormData): Promi
   if (error) return { ok: false, message: "Could not save your details. Please try again." };
   revalidatePath("/app", "layout");
   return { ok: true, message: "Your details have been saved." };
+}
+
+const CATEGORY_KEYS = ["announcements", "results", "payments", "attendance", "coursework", "messages"] as const;
+
+export async function saveNotificationPreferences(_prev: FormState, formData: FormData): Promise<FormState> {
+  const session = await requireSession();
+  const { normaliseGhanaPhone } = await import("@/lib/notify/channels");
+  const rawPhone = String(formData.get("smsPhone") ?? "").trim();
+  const phone = rawPhone ? normaliseGhanaPhone(rawPhone) : null;
+  if (rawPhone && !phone) return { ok: false, errors: { smsPhone: ["Enter a Ghanaian mobile number, e.g. 024 123 4567"] } };
+  const smsEnabled = formData.get("smsEnabled") === "on";
+  if (smsEnabled && !phone) return { ok: false, errors: { smsPhone: ["Add a phone number to receive SMS"] } };
+  const categories = Object.fromEntries(CATEGORY_KEYS.map((k) => [k, formData.get(`cat_${k}`) === "on"]));
+  const supabase = await createClient();
+  const { error } = await supabase.from("notification_preferences").upsert({ user_id: session.userId, email_enabled: formData.get("emailEnabled") === "on", sms_enabled: smsEnabled, sms_phone: phone, categories }, { onConflict: "user_id" });
+  if (error) return { ok: false, message: "Couldn't save your preferences." };
+  return { ok: true, message: "Notification preferences saved." };
 }

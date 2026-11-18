@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireSchool } from "@/lib/auth/session";
+import { guardianUsers, notifyUsers } from "@/lib/notify";
 import { createClient } from "@/lib/supabase/server";
 import type { FormState } from "@/lib/validation/auth";
 import { todayInAccra } from "@/lib/utils";
@@ -39,6 +40,10 @@ export async function saveRegister(_prev: FormState, formData: FormData): Promis
   if (error) return { ok: false, message: /row-level security/.test(error.message) ? "You can only take attendance for classes you teach." : friendlyDbError(error.message) };
   await supabase.rpc("log_audit", { p_action: "attendance.recorded", p_entity_type: "school_class", p_entity_id: head.data.classId, p_summary: `Attendance for ${head.data.date} (${rows.length} students)`, p_school_id: school.schoolId });
   revalidatePath("/school/attendance");
+  const absentees = rows.filter((r) => r.status === "absent").map((r) => r.student_id);
+  if (absentees.length && head.data.date === todayAccra) {
+    await notifyUsers({ schoolId: school.schoolId, userIds: await guardianUsers(absentees), category: "attendance", title: "Absence today", body: `Your child was marked absent on ${head.data.date}. Please contact the school if this is unexpected.`, link: "/parent" });
+  }
   const absent = rows.filter((r) => r.status === "absent").length;
   return { ok: true, message: `Register saved: ${rows.length - absent} present or late, ${absent} absent.` };
 }

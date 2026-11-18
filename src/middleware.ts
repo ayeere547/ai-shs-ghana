@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PREFIXES = ["/app", "/platform", "/school", "/student", "/register-school"];
+const PROTECTED_PREFIXES = ["/app", "/platform", "/school", "/student", "/parent", "/register-school"];
 const AUTH_PAGES = ["/login", "/register"];
 
 const isProtected = (pathname: string) => PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));

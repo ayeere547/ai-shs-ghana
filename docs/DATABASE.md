@@ -99,13 +99,32 @@ Exam RPCs: `start_exam`, `exam_paper` (no answer keys), `save_exam_answer`, `sub
 
 RPCs: `ai_quota`, `set_ai_limit`, `platform_ai_usage`, `match_knowledge` (security invoker), `review_flagged_message`, `class_insights`.
 
+## Phase 5 tables (implemented — `20261121000001_parents_operations.sql`)
+
+| Table | Notes |
+|---|---|
+| `fee_items`, `student_invoices`, `invoice_lines`, `student_payments` | invoice totals recalculated by trigger; one active invoice per student per term; INV-/RCT- numbers per school |
+| `payment_intents`, `school_payment_settings` | online payments; subaccount set by platform staff; completion by the server only (`complete_online_payment`) |
+| `expenditure_records`, `school_budgets` | `finance.manage` |
+| `dormitories`, `dorm_rooms`, `boarding_allocations` | trigger checks capacity, boarder residency and dorm gender |
+| `library_books`, `library_loans` | trigger checks copies available |
+| `inventory_items`, `inventory_transactions` | quantity changes only through the append-only ledger (`apply_stock_move`) |
+| `school_assets`, `maintenance_requests` | any staff member can report a fault |
+| `health_records`, `clinic_visits` | `health.manage` only; families see visits marked shared |
+| `family_messages` | per child; staff who teach the class or hold `parents.message`, and the child's guardians; no edits/deletes |
+| `notification_preferences`, `notification_outbox` | outbox is server-only |
+
+RPCs: `generate_term_invoices`, `add_invoice_line`, `cancel_invoice`, `record_payment`, `reverse_payment`,
+`create_payment_intent`, `complete_online_payment` (service role), `set_payment_settings` (platform),
+`guardian_children`, `guardian_child_summary`.
+
 ## Planned tables by phase
 
 | Phase | Tables |
 |---|---|
 | 3 Learning (deferred) | `digital_courses`, `course_modules`, `lessons`, `learning_progress` (structured courses — later) |
 | 4 AI (deferred) | `study_plans` (personalised revision plans) |
-| 5 Parents & operations | `fee_structures`, `student_invoices`, `student_payments`, `payment_records`, `expenditure_records`, `school_budgets`, `dormitories`, `rooms`, `boarding_allocations`, `library_books`, `library_transactions`, `inventory_items`, `inventory_transactions`, `school_assets`, `maintenance_requests`, `school_events`, `school_clubs`, `school_sports`, `school_vehicles`, `health_records`, `clinic_visits`, `emergency_contacts`, `announcements`, `messages`, `notification_preferences` |
+| 5 (deferred) | `school_events`, `school_clubs`, `school_sports`, `school_vehicles`, labs |
 | 6 National | `payments` (subscription), `support_tickets`, `support_requests`, invoices, integrations |
 
 ## Tenant extraction

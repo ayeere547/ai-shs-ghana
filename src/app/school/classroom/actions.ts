@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireSchool } from "@/lib/auth/session";
+import { classUsers, notifyUsers, schoolAudience } from "@/lib/notify";
 import { uploadClassroomFile } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 import { fieldErrors, formValues, type FormState } from "@/lib/validation/auth";
@@ -94,6 +95,9 @@ export async function postAnnouncement(_prev: FormState, formData: FormData): Pr
   });
   if (error) return { ok: false, message: /row-level security/.test(error.message) ? "You don't have permission to post this announcement." : friendlyDbError(error.message), values: formValues(formData) };
   if (!v.classId) await supabase.rpc("log_audit", { p_action: "announcement.posted", p_entity_type: "announcement", p_summary: v.title, p_school_id: school.schoolId });
+  const { data: { user } } = await supabase.auth.getUser();
+  const recipients = (v.classId ? await classUsers(v.classId) : await schoolAudience(school.schoolId, v.audience)).filter((u) => u !== user?.id);
+  await notifyUsers({ schoolId: school.schoolId, userIds: recipients, category: "announcements", title: `${v.isUrgent === "on" ? "URGENT: " : ""}${v.title}`, body: v.body.slice(0, 280), link: v.classId ? "/student/classroom" : "/app/notifications" });
   revalidatePath("/school", "layout");
   revalidatePath("/student", "layout");
   return { ok: true, message: "Announcement posted." };

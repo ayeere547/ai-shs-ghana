@@ -47,6 +47,17 @@ roles. Row Level Security alone decides each outcome. Covered:
 * Drafts private to the author; report comments approved by the author, reset to draft on edit, visible to families only after publication.
 * Insights for the class's teachers and results staff only.
 
+## Phase 5 RLS tests (`tests/rls-phase5.test.ts`)
+* Finance: staff without finance rights can't see invoices; invoice generation, totals, payments, reversals; guardians see only their children's invoices.
+* Online payments: guardians create intents only for their children; only the server completes them; idempotent; amount mismatch rejected.
+* Boarding capacity/gender/residency rules; library availability; stock only via the ledger; any staff can report faults.
+* Health records hidden from teachers and families except shared visits.
+* Family messages limited to the class's teachers, authorised staff and the child's guardians; no edits.
+* Parent portal RPCs and notification preferences/outbox access.
+
+## Notification and payment unit tests (`tests/notify-unit.test.ts`)
+Channel preferences, Ghana phone normalising, SMS text, Arkesel/Hubtel/Resend requests (mocked HTTP), Paystack signature check and API calls.
+
 ## AI unit tests (`tests/ai-unit.test.ts`)
 Client (request shape, structured output, retry/no-retry, truncation, missing key, embeddings, moderation) with mocked HTTP; chunking; source formatting and citation extraction; prompt rules; safety detection; cost estimates; draft → question-bank validation; pseudonymisation.
 

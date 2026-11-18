@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireSchool } from "@/lib/auth/session";
+import { classUsers, notifyUsers } from "@/lib/notify";
 import { parseQuestionForm } from "@/lib/exams/questions";
 import { createClient } from "@/lib/supabase/server";
 import { fieldErrors, formValues, type FormState } from "@/lib/validation/auth";
@@ -101,6 +102,14 @@ export async function examAction(formData: FormData) {
   } else if (op === "finalise") ({ error } = await supabase.rpc("finalise_expired_attempts", { p_exam: examId }));
   else ({ error } = await supabase.rpc("release_exam_results", { p_exam: examId, p_release: op === "release" }));
   revalidatePath(`/school/exams/${examId}`, "layout");
+  if (!error && (op === "publish" || op === "release")) {
+    const { data: e } = await supabase.from("exams").select("title, class_id, opens_at").eq("id", examId).single();
+    if (e) {
+      await notifyUsers(op === "publish"
+        ? { schoolId: school.schoolId, userIds: await classUsers(e.class_id, false), category: "coursework", title: `Exam scheduled: ${e.title}`, body: `Opens ${new Date(e.opens_at).toUTCString().slice(0, 22)} (GMT).`, link: `/student/exams/${examId}` }
+        : { schoolId: school.schoolId, userIds: await classUsers(e.class_id), category: "results", title: `Exam results: ${e.title}`, body: "Marked papers are now available to review.", link: `/student/exams/${examId}` });
+    }
+  }
   if (error) redirect(`/school/exams/${examId}?error=${encodeURIComponent(dbMessage(error.message))}`);
 }
 

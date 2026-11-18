@@ -43,7 +43,15 @@ export type SchoolPermission =
   | "ai.teacher_tools"
   | "knowledge.manage"
   | "ai.safeguarding"
-  | "ai.settings";
+  | "ai.settings"
+  | "finance.read"
+  | "finance.manage"
+  | "boarding.manage"
+  | "library.circulation"
+  | "inventory.manage"
+  | "health.manage"
+  | "parents.message"
+  | "parent.portal";
 
 export type PlatformRoleKey = "super_admin" | "platform_admin" | "support_officer" | "finance_admin" | "data_analyst";
 

@@ -14,6 +14,7 @@ const BANNERS = {
 export default async function SchoolLayout({ children }: { children: React.ReactNode }) {
   const { session, school } = await requireSchool();
   if (school.role === "student") redirect("/student");
+  if (school.role === "parent") redirect("/parent");
   const banner = school.schoolStatus !== "active" ? BANNERS[school.schoolStatus] : null;
   return (
     <AppShell

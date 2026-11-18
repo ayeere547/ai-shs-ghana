@@ -54,7 +54,7 @@ Status legend: ✅ done and tested · 🟡 partial · ⏳ not started
 | Release results, student review with correct answers and feedback | ✅ | |
 | Exam totals → term results (creates a Phase 2 assessment) | ✅ | |
 | Student published results page | ✅ | via `student_term_results` RPC |
-| Parent portal UI | ⏳ | Phase 5 (database rules for guardians already enforced) |
+| Parent portal UI | ✅ | Phase 5 |
 | Verified against a live Supabase project | ⏳ | needs project keys |
 
 ## Phase 4 — AI intelligence ✅ (code-complete 2026-11-20)
@@ -75,9 +75,26 @@ Status legend: ✅ done and tested · 🟡 partial · ⏳ not started
 | Streaming tutor replies | ⏳ | replies arrive whole; fine on low bandwidth |
 | Verified against a live AI provider and Supabase | ⏳ | needs keys; client tested with mocked HTTP |
 
-## Phase 5 — Parents & operations ⏳
-Parent portal (verified guardian links), fees and finance (GHS), boarding, library, inventory,
-labs, clubs, transport, restricted health records, notification engine (in-app, email, SMS).
+## Phase 5 — Parents & operations ✅ (code-complete 2026-11-21)
+
+| Item | Status | Notes |
+|---|---|---|
+| Parent portal: children (verified guardian links only), attendance, work due, published results, fees, receipts | ✅ | `/parent`; parents are redirected there from `/school` |
+| Parent ↔ school messages per child (class teachers + authorised staff) | ✅ | `/school/messages`, child page in the portal |
+| Fees (GHS): fee items, term invoice generation, extra lines, cancel, record/reverse payments, numbered receipts | ✅ | `/school/finance`; totals recalculated in the database |
+| Online fee payments via Paystack (Mobile Money/card) to the school's subaccount | ✅ | webhook + callback both re-verify with Paystack; idempotent |
+| Expenditure and budgets | ✅ | |
+| Boarding: dormitories, rooms, bed allocation (capacity, gender, boarders only) | ✅ | `/school/boarding` |
+| Library lending: catalogue, issue/return, availability, overdue | ✅ | `/school/books` |
+| Stores (stock in/out ledger), assets, maintenance requests | ✅ | `/school/inventory`, `/school/maintenance` |
+| Health records and clinic visits — nurse/health staff only, every view audited | ✅ | `/school/health` |
+| Notification engine: in-app + queued email (Resend) / SMS (Arkesel, Hubtel), per-user preferences | ✅ | cron `/api/cron/notifications` |
+| Hooks: announcements, assignments, exams, results publication, absences, payments, messages | ✅ | |
+| Labs, clubs, sports, transport, events | ⏳ | later (not needed for the core parent/finance loop) |
+| Verified against live Supabase, Paystack and SMS/email providers | ⏳ | needs keys; Paystack/SMS clients tested with mocked HTTP |
+
+Hosting note: Vercel Hobby runs crons at most once a day; use Pro (or an external scheduler calling the
+cron URL with the bearer secret) for 10-minute email/SMS delivery.
 
 ## Phase 6 — National platform ⏳
 Full directory, aggregated national analytics, subscription engine with Paystack/Hubtel, sponsored

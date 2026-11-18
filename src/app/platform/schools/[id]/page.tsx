@@ -18,6 +18,16 @@ import { Input } from "@/components/ui/primitives";
 
 import { DecisionPanel } from "./decision-panel";
 
+async function setPaymentSettings(formData: FormData) {
+  "use server";
+  await requirePlatformPermission("subscriptions.manage");
+  const v = z.object({ schoolId: z.uuid(), subaccount: z.string().trim().regex(/^(ACCT_[A-Za-z0-9]+)?$/) }).safeParse(Object.fromEntries(formData));
+  if (!v.success) return;
+  const supabase = await createClient();
+  await supabase.rpc("set_payment_settings", { p_school: v.data.schoolId, p_enabled: formData.get("enabled") === "on" && Boolean(v.data.subaccount), p_subaccount: v.data.subaccount || null });
+  revalidatePath(`/platform/schools/${v.data.schoolId}`);
+}
+
 async function setAiAllowance(formData: FormData) {
   "use server";
   await requirePlatformPermission("ai.limits.manage");
@@ -55,6 +65,7 @@ export default async function PlatformSchool({ params }: { params: Promise<{ id:
   ]);
 
   const { data: aiSettings } = canPlatform(session, "ai.limits.manage") ? await supabase.from("ai_settings").select("request_limit_override").eq("school_id", id).maybeSingle() : { data: null };
+  const { data: paySettings } = canPlatform(session, "subscriptions.manage") ? await supabase.from("school_payment_settings").select("online_payments_enabled, paystack_subaccount").eq("school_id", id).maybeSingle() : { data: undefined };
   const roleCounts = new Map<string, number>();
   for (const m of members ?? []) if (m.roles) roleCounts.set(m.roles.key, (roleCounts.get(m.roles.key) ?? 0) + 1);
 
@@ -137,6 +148,19 @@ export default async function PlatformSchool({ params }: { params: Promise<{ id:
               <p className="mt-3 text-xs text-muted-foreground">Onboarding: {s.onboarding_completed_at ? `completed ${formatDate(s.onboarding_completed_at)}` : "in progress"}</p>
             </CardBody>
           </Card>
+          {paySettings !== undefined && s.status === "active" && (
+            <Card>
+              <CardHeader title="Online fee payments" description="Paystack subaccount that receives this school's online fee payments." />
+              <CardBody>
+                <form action={setPaymentSettings} className="space-y-2 text-sm">
+                  <input type="hidden" name="schoolId" value={s.id} />
+                  <Input name="subaccount" defaultValue={paySettings?.paystack_subaccount ?? ""} placeholder="ACCT_xxxxxxxx" aria-label="Paystack subaccount code" className="h-9" />
+                  <label className="flex items-center gap-2"><input type="checkbox" name="enabled" defaultChecked={paySettings?.online_payments_enabled ?? false} className="h-4 w-4 accent-[var(--royal)]" /> Accept online payments</label>
+                  <SubmitButton size="sm" variant="secondary">Save</SubmitButton>
+                </form>
+              </CardBody>
+            </Card>
+          )}
           {aiSettings && s.status === "active" && (
             <Card>
               <CardHeader title="AI allowance" description="Monthly AI requests. Blank uses the school's plan (Free includes none)." />

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireSchool } from "@/lib/auth/session";
+import { classUsers, notifyUsers } from "@/lib/notify";
 import { createClient } from "@/lib/supabase/server";
 import { fieldErrors, formValues, type FormState } from "@/lib/validation/auth";
 import { friendlyDbError } from "@/lib/validation/school";
@@ -45,6 +46,7 @@ export async function createAssignment(_prev: FormState, formData: FormData): Pr
     .single();
   if (error) return { ok: false, message: /row-level security/.test(error.message) ? "You can only set assignments for subjects you teach." : friendlyDbError(error.message), values: formValues(formData) };
   revalidatePath("/school/assignments");
+  await notifyUsers({ schoolId: school.schoolId, userIds: await classUsers(v.classId, false), category: "coursework", title: `New assignment: ${v.title}`, body: `Due ${new Date(v.dueAt).toUTCString().slice(0, 22)}.`, link: `/student/assignments/${data.id}` });
   redirect(`/school/assignments/${data.id}`);
 }
 

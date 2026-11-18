@@ -51,7 +51,12 @@ export default async function StudentPage({ params, searchParams }: { params: Pr
       <PageHeader
         title={fullName(s)}
         description={`${s.student_number} · ${labelFrom(l.classes, s.class_id)} · ${s.residency === "boarding" ? "Boarding" : "Day"}`}
-        actions={<Badge tone={s.status === "active" ? "success" : "neutral"}>{STUDENT_STATUSES.find((x) => x.value === s.status)?.label}</Badge>}
+        actions={
+          <>
+            {(school.permissions.has("parents.message") || school.permissions.has("classroom.teach")) && <Link href={`/school/messages?student=${s.id}`} className={buttonClass("secondary", "sm")}>Message family</Link>}
+            <Badge tone={s.status === "active" ? "success" : "neutral"}>{STUDENT_STATUSES.find((x) => x.value === s.status)?.label}</Badge>
+          </>
+        }
       />
       {created && <Alert tone="success" className="mb-6" title="Student admitted">Add a parent or guardian and register subjects below.</Alert>}
 
