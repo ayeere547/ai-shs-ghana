@@ -52,11 +52,11 @@ Use separate Supabase projects and Paystack **test** keys for preview/staging de
 
 | Path | Schedule | Does |
 |---|---|---|
-| `/api/cron/notifications` | every 10 min | sends queued email/SMS |
+| `/api/cron/notifications` | daily 06:00 UTC (Hobby plan) — set `*/10 * * * *` on Pro | sends queued email/SMS |
 | `/api/cron/daily` | 05:00 UTC daily | subscription renewals, grace and past-due; data-retention rules |
 
-On Vercel Hobby, change the notifications schedule to daily or call it from an external scheduler with
-`Authorization: Bearer $CRON_SECRET`.
+The repository ships with the Hobby-compatible daily schedule. On Pro, change it to `*/10 * * * *`, or call
+the endpoint every 10 minutes from an external scheduler with `Authorization: Bearer $CRON_SECRET`.
 
 ## 7. Monitoring
 
