@@ -16,6 +16,8 @@
 | XSS | React escaping, no `dangerouslySetInnerHTML` except the static theme script; CSP-friendly headers | `next.config.ts` |
 | SQL injection | parameterised Supabase queries; RPCs use typed parameters | |
 | Logo upload abuse | storage bucket restricted to images ≤ 1 MB, path must start with a school the uploader manages | foundation migration |
+| Exam answer leakage / cheating | `questions` readable only by the subject's teachers; papers served by `exam_paper()` without keys; attempts and answers writable only through RPCs that check ownership and the deadline | Phase 3 migration |
+| Private classroom files | private bucket; reads require a visible row referencing the exact path; students upload only to their own submission folder | Phase 3 migration |
 | Children's data exposure in analytics | national analytics are aggregate-only RPCs; no tenant row access for platform roles | `platform_overview()` |
 
 ## Ghana Data Protection Act, 2012 (Act 843)

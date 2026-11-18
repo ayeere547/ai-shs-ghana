@@ -1,6 +1,6 @@
 import type { PlatformPermission, SchoolPermission } from "@/lib/auth/permissions";
 
-export const CURRENT_PHASE = 2;
+export const CURRENT_PHASE = 3;
 
 export type NavItem = { label: string; href: string; icon: string; phase: number };
 export type NavSection = { title: string; items: NavItem[] };
@@ -56,6 +56,17 @@ const SCHOOL_NAV: { title: string; items: SchoolGated[] }[] = [
     ],
   },
   {
+    title: "Teaching & learning",
+    items: [
+      { label: "Classroom", href: "/school/classroom", icon: "BookOpen", phase: 3, anyOf: ["classroom.teach", "classroom.manage"] },
+      { label: "Assignments", href: "/school/assignments", icon: "NotebookPen", phase: 3, anyOf: ["classroom.teach", "classroom.manage"] },
+      { label: "Online exams", href: "/school/exams", icon: "Timer", phase: 3, anyOf: ["classroom.teach", "classroom.manage"] },
+      { label: "Question bank", href: "/school/questions", icon: "ListChecks", phase: 3, anyOf: ["classroom.teach", "classroom.manage"] },
+      { label: "Digital library", href: "/school/library", icon: "Library", phase: 3, permission: "academics.read" },
+      { label: "Announcements", href: "/school/announcements", icon: "Megaphone", phase: 3, permission: "school.dashboard" },
+    ],
+  },
+  {
     title: "Administration",
     items: [
       { label: "Settings", href: "/school/settings", icon: "Settings", phase: 1, permission: "school.settings.manage" },
@@ -65,7 +76,6 @@ const SCHOOL_NAV: { title: string; items: SchoolGated[] }[] = [
   {
     title: "Coming next",
     items: [
-      { label: "Digital classroom", href: "/school/classroom", icon: "BookOpen", phase: 3, permission: "academics.read" },
       { label: "AI teaching tools", href: "/school/ai", icon: "Sparkles", phase: 4, permission: "academics.read" },
     ],
   },

@@ -13,9 +13,10 @@ import { fieldErrors, type FormState } from "@/lib/validation/auth";
 export async function switchSchool(formData: FormData) {
   const session = await requireSession();
   const schoolId = String(formData.get("schoolId") ?? "");
-  if (!session.memberships.some((m) => m.schoolId === schoolId)) redirect("/app?denied=1");
+  const membership = session.memberships.find((m) => m.schoolId === schoolId);
+  if (!membership) redirect("/app?denied=1");
   (await cookies()).set(ACTIVE_SCHOOL_COOKIE, schoolId, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 60 * 60 * 24 * 180 });
-  redirect("/school");
+  redirect(membership.role === "student" ? "/student" : "/school");
 }
 
 export async function markAllNotificationsRead() {

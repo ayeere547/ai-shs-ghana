@@ -70,11 +70,27 @@ in filename order (`supabase db push` or `npm run db:migrate`).
 Key helpers: `teaches(school, class, subject)`, `is_student_self()`, `is_guardian_of()`, `can_enter_scores()`, `assessment_published()`.
 Account-link columns (`user_id`) are excluded from column grants, so they can only change through audited RPCs.
 
+## Phase 3 tables (implemented — `20261119000001_learning_management.sql`)
+
+| Table | Notes |
+|---|---|
+| `learning_materials` | notes / video / document / link per class × subject; `is_published` |
+| `announcements` | school-wide (`class_id` null, with `audience`) or class/subject notices |
+| `classroom_posts` | threaded discussion; hiding only via `moderate_post()` |
+| `assignments`, `assignment_submissions` | submissions written only by `submit_assignment()` / `mark_submission()` |
+| `library_resources` | `source` = school / open_licence / licensed_official (licence note required) |
+| `questions` | type-checked answer keys; `source` labels AI-generated vs licensed past questions |
+| `exams`, `exam_questions`, `exam_attempts`, `exam_answers` | attempts/answers written only by exam RPCs; papers lock once started |
+
+Exam RPCs: `start_exam`, `exam_paper` (no answer keys), `save_exam_answer`, `submit_exam`, `finalise_expired_attempts`,
+`mark_exam_answer`, `release_exam_results`, `exam_review`, `record_exam_in_results`. Also `classroom_names`,
+`student_term_results`, `student_published_terms`.
+
 ## Planned tables by phase
 
 | Phase | Tables |
 |---|---|
-| 3 Learning | `learning_materials`, `digital_courses`, `course_modules`, `lessons`, `learning_progress`, `assignments`, `assignment_submissions`, `assessments`, `examinations`, `examination_questions`, `examination_attempts`, `examination_answers`, `question_banks` |
+| 3 Learning (deferred) | `digital_courses`, `course_modules`, `lessons`, `learning_progress` (structured courses — later) |
 | 4 AI | `knowledge_documents`, `knowledge_chunks` (+`embedding vector`), `ai_tutor_conversations`, `ai_tutor_messages`, `ai_usage_logs`, `ai_prompt_versions`, `study_plans` |
 | 5 Parents & operations | `fee_structures`, `student_invoices`, `student_payments`, `payment_records`, `expenditure_records`, `school_budgets`, `dormitories`, `rooms`, `boarding_allocations`, `library_books`, `library_transactions`, `inventory_items`, `inventory_transactions`, `school_assets`, `maintenance_requests`, `school_events`, `school_clubs`, `school_sports`, `school_vehicles`, `health_records`, `clinic_visits`, `emergency_contacts`, `announcements`, `messages`, `notification_preferences` |
 | 6 National | `payments` (subscription), `support_tickets`, `support_requests`, invoices, integrations |

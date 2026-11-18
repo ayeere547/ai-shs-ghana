@@ -143,3 +143,26 @@ describe("results", () => {
     expect(resultsCsv(["Name", "Note"], [["=HYPERLINK(x)", 'a "b", c']])).toBe(`Name,Note\r\n'=HYPERLINK(x),"a ""b"", c"`);
   });
 });
+
+describe("question form parsing (Phase 3)", () => {
+  const subject = "33333333-3333-4333-8333-333333333333";
+  const fd = (entries: Record<string, string>) => {
+    const f = new FormData();
+    for (const [k, v] of Object.entries({ subjectId: subject, marks: "2", difficulty: "medium", source: "teacher", prompt: "What is 2 + 2?", ...entries })) f.append(k, v);
+    return f;
+  };
+
+  it("re-letters MCQ options after dropping blanks and maps the correct answer", async () => {
+    const { parseQuestionForm } = await import("@/lib/exams/questions");
+    const r = parseQuestionForm(fd({ type: "mcq", option_a: "3", option_b: "", option_c: "4", correct: "c" }));
+    expect(r).toMatchObject({ ok: true, row: { options: [{ id: "a", text: "3" }, { id: "b", text: "4" }], answer: { correct: "b" } } });
+  });
+
+  it("requires a correct option, accepted answers and a licence note for official questions", async () => {
+    const { parseQuestionForm } = await import("@/lib/exams/questions");
+    expect(parseQuestionForm(fd({ type: "mcq", option_a: "3", option_b: "4" }))).toMatchObject({ ok: false, errors: { correct: expect.any(Array) } });
+    expect(parseQuestionForm(fd({ type: "short_answer", accepted: "  \n " }))).toMatchObject({ ok: false, errors: { accepted: expect.any(Array) } });
+    expect(parseQuestionForm(fd({ type: "essay", source: "licensed_past_question" }))).toMatchObject({ ok: false, errors: { sourceNote: expect.any(Array) } });
+    expect(parseQuestionForm(fd({ type: "true_false", correctBool: "false" }))).toMatchObject({ ok: true, row: { answer: { correct: false } } });
+  });
+});

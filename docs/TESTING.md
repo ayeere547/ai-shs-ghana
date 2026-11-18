@@ -30,6 +30,15 @@ roles. Row Level Security alone decides each outcome. Covered:
 * The database rejects double-booking a teacher; teachers can't edit the timetable.
 * Status history, promotion and graduation only through RPCs; account links (`user_id`) can't be written directly.
 
+## Phase 3 RLS tests (`tests/rls-phase3.test.ts`)
+* Materials only by the subject teacher; students see published items for their own class only.
+* Announcements respect audience; teachers can't post school-wide; non-teaching staff can't post to a class.
+* Discussion: students post only in their class and only as themselves; teachers hide posts; hidden posts vanish for classmates but not the author.
+* Assignments: submissions only via RPC, resubmission until marked, late rules, marking limited to the subject teacher, parents see only returned work, students' files only in their own folder.
+* Library: only library managers add items; staff-only items hidden from students; "licensed official" requires a licence note.
+* Exams: students can never read the question bank; the paper contains no answer keys; other students can't read or answer someone's attempt; auto-marking; essay marking limits; release blocked until marked; questions frozen after use; exams can't start early; timed-out attempts close.
+* Student results only after publication, for the student and their guardian.
+
 ## Unit tests (`tests/unit.test.ts`, `tests/phase2-unit.test.ts`)
 Phase 2 adds: CSV parsing and import validation/duplicate detection, the timetable generator (no clashes, spreading, overload reporting, fixed slots), and results maths (weighting, incomplete subjects, grade boundaries, tied positions, safe CSV export).
 

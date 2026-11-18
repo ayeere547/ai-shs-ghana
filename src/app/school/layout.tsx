@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import { AppShell } from "@/components/layout/app-shell";
 import { requireSchool } from "@/lib/auth/session";
 import { schoolNavigation } from "@/lib/navigation";
@@ -11,6 +13,7 @@ const BANNERS = {
 
 export default async function SchoolLayout({ children }: { children: React.ReactNode }) {
   const { session, school } = await requireSchool();
+  if (school.role === "student") redirect("/student");
   const banner = school.schoolStatus !== "active" ? BANNERS[school.schoolStatus] : null;
   return (
     <AppShell

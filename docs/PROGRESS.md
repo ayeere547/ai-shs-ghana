@@ -39,8 +39,23 @@ Status legend: ✅ done and tested · 🟡 partial · ⏳ not started
 | Leave management, staff documents, report cards (PDF) | ⏳ | moved to Phase 3/5 |
 | Verified against a live Supabase project | ⏳ | needs project keys; Docker Desktop not running locally |
 
-## Phase 3 — Learning management ⏳
-Student and teacher portals, digital classroom, assignments, digital library, examinations and question bank.
+## Phase 3 — Learning management ✅ (code-complete 2026-11-19)
+
+| Item | Status | Notes |
+|---|---|---|
+| Student portal (`/student`): today's lessons, due work, exams, announcements, attendance | ✅ | students are routed here automatically |
+| Digital classroom: notes, video/web links, file uploads, drafts vs published | ✅ | private `classroom` bucket, signed links |
+| Class and school-wide announcements (audience: all / staff / students) | ✅ | |
+| Moderated class discussion (teachers hide/restore; hidden posts vanish for others) | ✅ | |
+| Assignments: set, submit text or files, resubmit until marked, late rules, mark & feedback | ✅ | unsent drafts kept on the device |
+| Digital library with honest provenance (school / open licence / licensed official) | ✅ | staff-only items supported |
+| Question bank (MCQ, true/false, short answer, essay) with source labels | ✅ | answer keys never reach students |
+| Online exams: timed, shuffled, autosave + offline retry, auto-marking, essay marking | ✅ | expired attempts closed automatically |
+| Release results, student review with correct answers and feedback | ✅ | |
+| Exam totals → term results (creates a Phase 2 assessment) | ✅ | |
+| Student published results page | ✅ | via `student_term_results` RPC |
+| Parent portal UI | ⏳ | Phase 5 (database rules for guardians already enforced) |
+| Verified against a live Supabase project | ⏳ | needs project keys |
 
 ## Phase 4 — AI intelligence ⏳
 Central AI service layer (provider config, prompt versioning, token/cost tracking, per-school limits,

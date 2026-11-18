@@ -3,7 +3,7 @@
 National multi-school, AI-powered management and learning platform for Ghanaian Senior High Schools.
 Next.js 15 (App Router) · TypeScript · Tailwind v4 · Supabase (Postgres + RLS, Auth, Storage).
 
-**Status:** Phases 1 (foundation) and 2 (core school management) built and tested — see [docs/PROGRESS.md](docs/PROGRESS.md).
+**Status:** Phases 1–3 (foundation, core school management, learning management) built and tested — see [docs/PROGRESS.md](docs/PROGRESS.md).
 
 | Doc | |
 |---|---|
@@ -27,7 +27,8 @@ src/app/(auth)        sign in, register, password reset
 src/app/app           account hub, notifications
 src/app/register-school
 src/app/platform      national console (verification, staff, audit)
-src/app/school        school workspace (dashboard, onboarding, academics, members, settings, audit)
+src/app/school        staff workspace (management, classroom, assignments, exams, library, results)
+src/app/student       student portal
 src/lib               auth/session, validation, school resource engine, site content
 supabase/migrations   schema + RLS + RPCs
 tests                 PGlite RLS tests, unit tests

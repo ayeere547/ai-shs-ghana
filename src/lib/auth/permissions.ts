@@ -31,7 +31,12 @@ export type SchoolPermission =
   | "assessments.record"
   | "assessments.manage"
   | "results.read"
-  | "results.publish";
+  | "results.publish"
+  | "classroom.teach"
+  | "classroom.manage"
+  | "announcements.manage"
+  | "library.manage"
+  | "student.portal";
 
 export type PlatformRoleKey = "super_admin" | "platform_admin" | "support_officer" | "finance_admin" | "data_analyst";
 

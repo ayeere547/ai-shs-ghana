@@ -84,7 +84,18 @@ export async function asUserSteps(db: Db, userId: string | null, fn: (q: <T = Re
   try {
     await db.query(`select set_config('request.jwt.claim.sub', $1, true)`, [userId ?? ""]);
     await db.exec(userId ? "set local role authenticated" : "set local role anon");
-    await fn(async (sql, params = []) => (await db.query(sql, params)).rows as never);
+    // Each step runs in a savepoint, so an expected failure doesn't abort the rest of the scenario.
+    await fn(async (sql, params = []) => {
+      await db.exec("savepoint step");
+      try {
+        const rows = (await db.query(sql, params)).rows;
+        await db.exec("release savepoint step");
+        return rows as never;
+      } catch (error) {
+        await db.exec("rollback to savepoint step");
+        throw error;
+      }
+    });
   } finally {
     await db.exec("rollback");
   }

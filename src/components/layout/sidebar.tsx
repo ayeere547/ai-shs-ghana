@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  BarChart3, BookOpen, BriefcaseBusiness, FileCheck2, CalendarDays, ClipboardCheck, CreditCard, GraduationCap, LayoutDashboard, LifeBuoy, ListChecks, School, ScrollText, Settings,
+  Library, Megaphone, NotebookPen, Timer, BarChart3, BookOpen, BriefcaseBusiness, FileCheck2, CalendarDays, ClipboardCheck, CreditCard, GraduationCap, LayoutDashboard, LifeBuoy, ListChecks, School, ScrollText, Settings,
   ShieldCheck, Sparkles, UserRound, Users, X, type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -13,11 +13,11 @@ import { cn } from "@/lib/utils";
 import { BrandMark } from "./brand";
 
 const ICONS: Record<string, LucideIcon> = {
-  BarChart3, BookOpen, BriefcaseBusiness, FileCheck2, CalendarDays, ClipboardCheck, CreditCard, GraduationCap, LayoutDashboard, LifeBuoy, ListChecks, School, ScrollText, Settings,
+  Library, Megaphone, NotebookPen, Timer, BarChart3, BookOpen, BriefcaseBusiness, FileCheck2, CalendarDays, ClipboardCheck, CreditCard, GraduationCap, LayoutDashboard, LifeBuoy, ListChecks, School, ScrollText, Settings,
   ShieldCheck, Sparkles, UserRound, Users,
 };
 
-const ROOTS = ["/platform", "/school"];
+const ROOTS = ["/platform", "/school", "/student"];
 
 export function Sidebar({ sections, open, onClose, footer }: { sections: NavSection[]; open: boolean; onClose: () => void; footer?: React.ReactNode }) {
   const pathname = usePathname();
