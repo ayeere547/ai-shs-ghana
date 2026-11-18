@@ -57,10 +57,23 @@ Status legend: ✅ done and tested · 🟡 partial · ⏳ not started
 | Parent portal UI | ⏳ | Phase 5 (database rules for guardians already enforced) |
 | Verified against a live Supabase project | ⏳ | needs project keys |
 
-## Phase 4 — AI intelligence ⏳
-Central AI service layer (provider config, prompt versioning, token/cost tracking, per-school limits,
-moderation), AI tutor with curriculum RAG + citations, teacher assistant (lesson plans, notes,
-questions, marking assistant, report drafting — all human-approved), learning analytics.
+## Phase 4 — AI intelligence ✅ (code-complete 2026-11-20)
+
+| Item | Status | Notes |
+|---|---|---|
+| Central AI service layer: OpenAI-compatible provider, env-configurable models, timeouts/retries, structured outputs | ✅ | `src/lib/ai/*`; no AI calls from components |
+| Prompt versioning, token + cost tracking, per-school monthly allowance, per-student daily limit | ✅ | Free plan = 0 requests; platform staff set overrides |
+| Curriculum knowledge base (PDF/text → chunks → pgvector), school-private + platform-wide, official/licence labels | ✅ | keyword search fallback when AI isn't configured |
+| AI tutor: step-by-step teaching, citations, "general explanation" labelling, image questions, voice dictation | ✅ | `/student/tutor`; images never stored |
+| Student safety: local checks + provider moderation, caring fixed reply, safeguarding alerts and review queue | ✅ | `/school/safeguarding` |
+| Lesson planner, notes generator (→ unpublished classroom drafts) | ✅ | `/school/ai` |
+| Question generator (teacher picks → bank, labelled AI-generated) | ✅ | |
+| Marking assistant for essays and assignments (suggests; teacher decides) | ✅ | |
+| Report comments: AI drafts from anonymised data, teacher approval, visible after publication | ✅ | `/school/report-comments` |
+| Learning insights (support indicators, weak subjects/topics) + anonymised AI summary | ✅ | `/school/insights` |
+| AI settings/usage (school) and AI usage/allowances (platform) | ✅ | |
+| Streaming tutor replies | ⏳ | replies arrive whole; fine on low bandwidth |
+| Verified against a live AI provider and Supabase | ⏳ | needs keys; client tested with mocked HTTP |
 
 ## Phase 5 — Parents & operations ⏳
 Parent portal (verified guardian links), fees and finance (GHS), boarding, library, inventory,

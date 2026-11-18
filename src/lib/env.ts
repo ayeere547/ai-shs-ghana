@@ -23,7 +23,7 @@ export function integrationStatus() {
   const env = serverEnv();
   return [
     { key: "supabase", name: "Supabase (database, auth, storage)", required: true, configured: isSupabaseConfigured() && Boolean(env.serviceRoleKey), envVars: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY"] },
-    { key: "openai", name: "OpenAI (AI tutor & teacher tools — Phase 4)", required: false, configured: Boolean(env.openaiApiKey), envVars: ["OPENAI_API_KEY", "OPENAI_MODEL"] },
+    { key: "openai", name: "AI provider (tutor, teacher tools, smart search)", required: false, configured: Boolean(env.openaiApiKey), envVars: ["OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_MODEL", "OPENAI_EMBEDDING_MODEL"] },
     { key: "email", name: "Email notifications (Resend — Phase 5)", required: false, configured: Boolean(env.resendApiKey), envVars: ["RESEND_API_KEY", "EMAIL_FROM"] },
     { key: "sms", name: "SMS provider (Phase 5)", required: false, configured: Boolean(env.smsApiKey), envVars: ["SMS_PROVIDER", "SMS_API_KEY", "SMS_SENDER_ID"] },
     { key: "payments", name: "Paystack / Hubtel (Phase 6)", required: false, configured: Boolean(env.paystackSecretKey), envVars: ["PAYSTACK_SECRET_KEY", "HUBTEL_CLIENT_ID"] },

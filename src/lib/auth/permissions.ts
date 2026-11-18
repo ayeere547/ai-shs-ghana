@@ -10,7 +10,9 @@ export type PlatformPermission =
   | "plans.manage"
   | "subscriptions.manage"
   | "analytics.national"
-  | "support.manage";
+  | "support.manage"
+  | "content.manage"
+  | "ai.limits.manage";
 
 export type SchoolPermission =
   | "school.dashboard"
@@ -36,7 +38,12 @@ export type SchoolPermission =
   | "classroom.manage"
   | "announcements.manage"
   | "library.manage"
-  | "student.portal";
+  | "student.portal"
+  | "ai.tutor"
+  | "ai.teacher_tools"
+  | "knowledge.manage"
+  | "ai.safeguarding"
+  | "ai.settings";
 
 export type PlatformRoleKey = "super_admin" | "platform_admin" | "support_officer" | "finance_admin" | "data_analyst";
 

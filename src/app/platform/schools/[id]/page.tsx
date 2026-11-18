@@ -1,4 +1,6 @@
 import { ArrowLeft } from "lucide-react";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -11,7 +13,20 @@ import { SCHOOL_STATUS } from "@/lib/schools";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
 
+import { SubmitButton } from "@/components/ui/confirm-submit";
+import { Input } from "@/components/ui/primitives";
+
 import { DecisionPanel } from "./decision-panel";
+
+async function setAiAllowance(formData: FormData) {
+  "use server";
+  await requirePlatformPermission("ai.limits.manage");
+  const v = z.object({ schoolId: z.uuid(), limit: z.string().trim().regex(/^\d{0,7}$/) }).safeParse(Object.fromEntries(formData));
+  if (!v.success) return;
+  const supabase = await createClient();
+  await supabase.rpc("set_ai_limit", { p_school: v.data.schoolId, p_limit: v.data.limit === "" ? null : Number(v.data.limit) });
+  revalidatePath(`/platform/schools/${v.data.schoolId}`);
+}
 
 export const metadata: Metadata = { title: "School" };
 
@@ -39,6 +54,7 @@ export default async function PlatformSchool({ params }: { params: Promise<{ id:
       : Promise.resolve({ data: null }),
   ]);
 
+  const { data: aiSettings } = canPlatform(session, "ai.limits.manage") ? await supabase.from("ai_settings").select("request_limit_override").eq("school_id", id).maybeSingle() : { data: null };
   const roleCounts = new Map<string, number>();
   for (const m of members ?? []) if (m.roles) roleCounts.set(m.roles.key, (roleCounts.get(m.roles.key) ?? 0) + 1);
 
@@ -121,6 +137,18 @@ export default async function PlatformSchool({ params }: { params: Promise<{ id:
               <p className="mt-3 text-xs text-muted-foreground">Onboarding: {s.onboarding_completed_at ? `completed ${formatDate(s.onboarding_completed_at)}` : "in progress"}</p>
             </CardBody>
           </Card>
+          {aiSettings && s.status === "active" && (
+            <Card>
+              <CardHeader title="AI allowance" description="Monthly AI requests. Blank uses the school's plan (Free includes none)." />
+              <CardBody>
+                <form action={setAiAllowance} className="flex gap-2">
+                  <input type="hidden" name="schoolId" value={s.id} />
+                  <Input name="limit" inputMode="numeric" defaultValue={aiSettings.request_limit_override ?? ""} placeholder="Use plan" aria-label="Monthly AI requests" className="h-9" />
+                  <SubmitButton size="sm" variant="secondary">Save</SubmitButton>
+                </form>
+              </CardBody>
+            </Card>
+          )}
           {audit && (
             <Card>
               <CardHeader title="Recent activity" />

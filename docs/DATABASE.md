@@ -86,12 +86,25 @@ Exam RPCs: `start_exam`, `exam_paper` (no answer keys), `save_exam_answer`, `sub
 `mark_exam_answer`, `release_exam_results`, `exam_review`, `record_exam_in_results`. Also `classroom_names`,
 `student_term_results`, `student_published_terms`.
 
+## Phase 4 tables (implemented — `20261120000001_ai_intelligence.sql`)
+
+| Table | Notes |
+|---|---|
+| `ai_settings` | per-school switches and student daily limit; `request_limit_override` only via `set_ai_limit()` |
+| `ai_usage_logs` | written by the server (service role) only; feature, model, prompt version, tokens, estimated cost |
+| `knowledge_documents`, `knowledge_chunks` | `school_id` null = platform-wide; `embedding vector(1536)` (HNSW), `tsv` for keyword search |
+| `ai_tutor_conversations`, `ai_tutor_messages` | private to the student; messages server-written; flagged messages visible to `ai.safeguarding` |
+| `ai_drafts` | teacher-assistant outputs, private to the author |
+| `report_comments` | draft/approved; approval stamped by trigger; edits revert to draft |
+
+RPCs: `ai_quota`, `set_ai_limit`, `platform_ai_usage`, `match_knowledge` (security invoker), `review_flagged_message`, `class_insights`.
+
 ## Planned tables by phase
 
 | Phase | Tables |
 |---|---|
 | 3 Learning (deferred) | `digital_courses`, `course_modules`, `lessons`, `learning_progress` (structured courses — later) |
-| 4 AI | `knowledge_documents`, `knowledge_chunks` (+`embedding vector`), `ai_tutor_conversations`, `ai_tutor_messages`, `ai_usage_logs`, `ai_prompt_versions`, `study_plans` |
+| 4 AI (deferred) | `study_plans` (personalised revision plans) |
 | 5 Parents & operations | `fee_structures`, `student_invoices`, `student_payments`, `payment_records`, `expenditure_records`, `school_budgets`, `dormitories`, `rooms`, `boarding_allocations`, `library_books`, `library_transactions`, `inventory_items`, `inventory_transactions`, `school_assets`, `maintenance_requests`, `school_events`, `school_clubs`, `school_sports`, `school_vehicles`, `health_records`, `clinic_visits`, `emergency_contacts`, `announcements`, `messages`, `notification_preferences` |
 | 6 National | `payments` (subscription), `support_tickets`, `support_requests`, invoices, integrations |
 

@@ -12,12 +12,9 @@ const NAV: NavSection[] = [
       { label: "Assignments", href: "/student/assignments", icon: "NotebookPen", phase: 3 },
       { label: "Exams & practice", href: "/student/exams", icon: "Timer", phase: 3 },
       { label: "Results", href: "/student/results", icon: "BarChart3", phase: 3 },
+      { label: "AI tutor", href: "/student/tutor", icon: "Sparkles", phase: 4 },
       { label: "Library", href: "/student/library", icon: "Library", phase: 3 },
     ],
-  },
-  {
-    title: "Coming next",
-    items: [{ label: "AI tutor", href: "/student/tutor", icon: "Sparkles", phase: 4 }],
   },
 ];
 

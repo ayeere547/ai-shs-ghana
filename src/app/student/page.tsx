@@ -112,7 +112,7 @@ export default async function StudentHome() {
         </Card>
       </div>
       <Card className="mt-6">
-        <CardBody className="text-sm text-muted-foreground">The AI tutor arrives in the next development phase. Until then, use the classroom discussion to ask your teacher and classmates.</CardBody>
+        <CardBody className="flex flex-wrap items-center justify-between gap-3 text-sm"><span className="text-muted-foreground">Stuck on something? The AI tutor explains step by step and cites your school&apos;s materials.</span><Link href="/student/tutor" className="font-medium text-royal hover:underline">Open the AI tutor</Link></CardBody>
       </Card>
     </>
   );

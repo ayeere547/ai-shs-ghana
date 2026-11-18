@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { MarkAssist } from "@/components/ai/tools";
 import { MarkAnswerForm } from "@/components/exams/forms";
 import { Badge, Card, CardBody, PageHeader } from "@/components/ui/primitives";
 import { requireSchool } from "@/lib/auth/session";
@@ -27,6 +28,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ id: str
   const rows = (answers ?? []).sort((x, y) => x.exam_questions.position - y.exam_questions.position);
   const path = `/school/exams/${id}/scripts/${attempt}`;
   const writable = school.schoolStatus === "active" && a.status !== "in_progress";
+  const aiTools = school.permissions.has("ai.teacher_tools");
 
   const responseText = (ans: Ans) => {
     const q = ans.exam_questions.questions;
@@ -60,7 +62,12 @@ export default async function ScriptPage({ params }: { params: Promise<{ id: str
                 </div>
                 <div className="space-y-2">
                   {q.type === "essay" ? (
-                    writable ? <MarkAnswerForm answerId={ans.id} path={path} max={Number(ans.exam_questions.marks)} marks={ans.awarded_marks == null ? null : Number(ans.awarded_marks)} feedback={ans.feedback} /> : <p className="text-sm text-muted-foreground">Not marked yet</p>
+                    writable ? (
+                      <>
+                        <MarkAnswerForm answerId={ans.id} path={path} max={Number(ans.exam_questions.marks)} marks={ans.awarded_marks == null ? null : Number(ans.awarded_marks)} feedback={ans.feedback} />
+                        {aiTools && ans.response && <MarkAssist kind="exam_answer" id={ans.id} />}
+                      </>
+                    ) : <p className="text-sm text-muted-foreground">Not marked yet</p>
                   ) : (
                     <p className="inline-flex items-center gap-1.5 text-sm">
                       {ans.is_correct ? <Check className="h-4 w-4 text-accent" /> : <X className="h-4 w-4 text-danger" />}

@@ -1,6 +1,6 @@
 import type { PlatformPermission, SchoolPermission } from "@/lib/auth/permissions";
 
-export const CURRENT_PHASE = 3;
+export const CURRENT_PHASE = 4;
 
 export type NavItem = { label: string; href: string; icon: string; phase: number };
 export type NavSection = { title: string; items: NavItem[] };
@@ -15,13 +15,14 @@ const PLATFORM_NAV: { title: string; items: Gated<PlatformPermission>[] }[] = [
       { label: "Schools", href: "/platform/schools", icon: "School", phase: 1, permission: "schools.read_all" },
       { label: "Platform staff", href: "/platform/users", icon: "ShieldCheck", phase: 1, permission: "platform.users.manage" },
       { label: "Audit log", href: "/platform/audit", icon: "ScrollText", phase: 1, permission: "platform.audit.read" },
+      { label: "AI usage", href: "/platform/ai-usage", icon: "Sparkles", phase: 4, permission: "analytics.national" },
+      { label: "Shared knowledge", href: "/platform/knowledge", icon: "BookOpen", phase: 4, permission: "content.manage" },
     ],
   },
   {
     title: "Coming next",
     items: [
       { label: "Subscriptions", href: "/platform/subscriptions", icon: "CreditCard", phase: 6, permission: "subscriptions.manage" },
-      { label: "AI usage", href: "/platform/ai-usage", icon: "Sparkles", phase: 4, permission: "analytics.national" },
       { label: "Support", href: "/platform/support", icon: "LifeBuoy", phase: 6, permission: "support.manage" },
     ],
   },
@@ -67,6 +68,16 @@ const SCHOOL_NAV: { title: string; items: SchoolGated[] }[] = [
     ],
   },
   {
+    title: "AI",
+    items: [
+      { label: "AI teaching assistant", href: "/school/ai", icon: "Sparkles", phase: 4, permission: "ai.teacher_tools" },
+      { label: "Learning insights", href: "/school/insights", icon: "BarChart3", phase: 4, anyOf: ["results.read", "assessments.record", "assessments.manage"] },
+      { label: "Knowledge base", href: "/school/knowledge", icon: "Library", phase: 4, anyOf: ["knowledge.manage", "ai.teacher_tools"] },
+      { label: "Safeguarding", href: "/school/safeguarding", icon: "ShieldCheck", phase: 4, permission: "ai.safeguarding" },
+      { label: "AI settings & usage", href: "/school/ai-settings", icon: "Settings", phase: 4, permission: "ai.settings" },
+    ],
+  },
+  {
     title: "Administration",
     items: [
       { label: "Settings", href: "/school/settings", icon: "Settings", phase: 1, permission: "school.settings.manage" },
@@ -76,7 +87,6 @@ const SCHOOL_NAV: { title: string; items: SchoolGated[] }[] = [
   {
     title: "Coming next",
     items: [
-      { label: "AI teaching tools", href: "/school/ai", icon: "Sparkles", phase: 4, permission: "academics.read" },
     ],
   },
 ];

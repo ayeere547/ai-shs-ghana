@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { updateAssignment } from "@/app/school/assignments/actions";
+import { MarkAssist } from "@/components/ai/tools";
 import { MarkForm } from "@/components/assignments/forms";
 import { buttonClass } from "@/components/ui/button";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
@@ -67,7 +68,12 @@ export default async function AssignmentPage({ params }: { params: Promise<{ id:
                     {s.body && <p className="whitespace-pre-wrap">{s.body}</p>}
                     {s.file_path && files.get(s.file_path) && <a href={files.get(s.file_path)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-medium text-royal hover:underline"><FileText className="h-4 w-4" /> {fileLabel(s.file_path)}</a>}
                   </div>
-                  {writable && <MarkForm submissionId={s.id} assignmentId={a.id} maxScore={Number(a.max_score)} score={s.score == null ? null : Number(s.score)} feedback={s.feedback} />}
+                  {writable && (
+                    <div className="space-y-2">
+                      <MarkForm submissionId={s.id} assignmentId={a.id} maxScore={Number(a.max_score)} score={s.score == null ? null : Number(s.score)} feedback={s.feedback} />
+                      {school.permissions.has("ai.teacher_tools") && s.body && <MarkAssist kind="submission" id={s.id} />}
+                    </div>
+                  )}
                 </CardBody>
               </Card>
             );

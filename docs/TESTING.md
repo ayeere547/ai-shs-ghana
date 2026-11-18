@@ -39,6 +39,17 @@ roles. Row Level Security alone decides each outcome. Covered:
 * Exams: students can never read the question bank; the paper contains no answer keys; other students can't read or answer someone's attempt; auto-marking; essay marking limits; release blocked until marked; questions frozen after use; exams can't start early; timed-out attempts close.
 * Student results only after publication, for the student and their guardian.
 
+## Phase 4 RLS tests (`tests/rls-phase4.test.ts`)
+* Schools toggle AI but can't change their allowance; quota follows the plan, overrides and billable usage only.
+* Usage logs can't be written by users; students see their own, AI admins their school's.
+* Knowledge base: per-school isolation, platform-wide sharing, no smuggling chunks across schools, vector and keyword retrieval both respect RLS.
+* Tutor: private conversations, no client-written messages or flag changes, safeguarding staff see only flagged messages.
+* Drafts private to the author; report comments approved by the author, reset to draft on edit, visible to families only after publication.
+* Insights for the class's teachers and results staff only.
+
+## AI unit tests (`tests/ai-unit.test.ts`)
+Client (request shape, structured output, retry/no-retry, truncation, missing key, embeddings, moderation) with mocked HTTP; chunking; source formatting and citation extraction; prompt rules; safety detection; cost estimates; draft → question-bank validation; pseudonymisation.
+
 ## Unit tests (`tests/unit.test.ts`, `tests/phase2-unit.test.ts`)
 Phase 2 adds: CSV parsing and import validation/duplicate detection, the timetable generator (no clashes, spreading, overload reporting, fixed slots), and results maths (weighting, incomplete subjects, grade boundaries, tied positions, safe CSV export).
 

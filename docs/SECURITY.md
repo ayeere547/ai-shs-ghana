@@ -32,9 +32,20 @@ the Data Protection Commission as a data controller/processor.
 
 ## AI safety (Phase 4)
 
-Student conversations are not used for model training; AI output that affects grades or reports is
-always a draft requiring teacher approval; generated questions are never labelled as official WAEC
-questions.
+* **Trust boundary:** tutor messages and AI usage are written only by the server with the service role,
+  after authenticating the user and moderating input. Students can't forge replies, clear safety flags or
+  manipulate the school's quota.
+* **Child safety:** every tutor message passes local self-harm/abuse checks and provider moderation. A
+  concern gets a fixed, caring reply (talk to a counsellor / trusted adult, 112 in an emergency), is flagged
+  and alerts safeguarding staff, who see only flagged messages — never whole chats.
+* **Privacy:** tutor images are sent to the model but not stored. Report comments and class insights are
+  built from anonymised data (no names). No student data is used for model training by this platform;
+  check your AI provider's data-use terms (API data is not used for training by default at OpenAI) and
+  record the provider as a data processor.
+* **Human review:** grades, report comments, generated questions and AI notes are drafts until a teacher
+  approves or publishes them. Generated questions are labelled AI-generated, never official WAEC.
+* **Honesty:** answers cite knowledge-base sources; uncited answers are labelled general explanations.
+* **Cost control:** per-school monthly allowances (Free plan = none), per-student daily limits, usage logs.
 
 ## Operational
 
