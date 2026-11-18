@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { confirmPaystackReference } from "@/lib/payments/complete";
+import { confirmAnyReference } from "@/lib/payments/complete";
 import { isPaystackConfigured, verifySignature } from "@/lib/payments/paystack";
 
 /** Paystack webhook: signature-checked, then re-verified with Paystack's API before recording. */
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "bad payload" }, { status: 400 });
   }
   if (event.event === "charge.success" && typeof event.data?.reference === "string") {
-    await confirmPaystackReference(event.data.reference);
+    await confirmAnyReference(event.data.reference);
   }
   return NextResponse.json({ received: true });
 }

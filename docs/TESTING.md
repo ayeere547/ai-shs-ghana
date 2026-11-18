@@ -55,6 +55,18 @@ roles. Row Level Security alone decides each outcome. Covered:
 * Family messages limited to the class's teachers, authorised staff and the child's guardians; no edits.
 * Parent portal RPCs and notification preferences/outbox access.
 
+## Phase 6 RLS tests (`tests/rls-phase6.test.ts`)
+* Plans: only finance staff change prices; Free stays free; changes audited.
+* Subscriptions: billing roles request plans, other roles/schools can't; one open invoice; server-only, idempotent completion; amount mismatch recorded not applied; renewals.
+* Sponsorships: partial and full coverage, platform-only.
+* Offline payments and plan assignment are platform-only with references/reasons.
+* Lifecycle: renewal invoice once, grace, past due, Free student cap enforced.
+* Support: who can open/see tickets, hidden internal notes, status flow, assignment rules, users without a school.
+* National analytics: permission-gated, small groups suppressed; revenue for finance staff only.
+
+## Phase 6 unit tests (`tests/phase6-unit.test.ts`)
+Analytics CSV (suppression, formula injection), error-message filtering, Paystack checkout URL check, subscription payments without a subaccount, cron secret check.
+
 ## Notification and payment unit tests (`tests/notify-unit.test.ts`)
 Channel preferences, Ghana phone normalising, SMS text, Arkesel/Hubtel/Resend requests (mocked HTTP), Paystack signature check and API calls.
 

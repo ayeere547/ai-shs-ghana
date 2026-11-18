@@ -96,9 +96,24 @@ Status legend: ✅ done and tested · 🟡 partial · ⏳ not started
 Hosting note: Vercel Hobby runs crons at most once a day; use Pro (or an external scheduler calling the
 cron URL with the bearer secret) for 10-minute email/SMS delivery.
 
-## Phase 6 — National platform ⏳
-Full directory, aggregated national analytics, subscription engine with Paystack/Hubtel, sponsored
-and subsidised plans, support tickets, integrations.
+## Phase 6 — National platform ✅ (code-complete 2026-11-22)
+
+| Item | Status | Notes |
+|---|---|---|
+| Plan editor: prices (GH₵), limits, features, public/hidden/retired; Free stays free; changes audited | ✅ | `/platform/plans` |
+| Subscription invoices (SUB-YY-NNNNNN), one open invoice per school, renewals continue from the current end date | ✅ | |
+| School Billing & plan page: usage vs limits, choose/renew a plan, pay with Paystack (platform account), invoice history | ✅ | `/school/billing` |
+| Offline payments (bank transfer, MoMo, cheque), waivers and direct plan assignment by platform finance staff | ✅ | school page in the platform console |
+| Sponsors and sponsorships: sponsored (100%) and subsidised (partial) plans; fully covered invoices settle at once | ✅ | `/platform/subscriptions?tab=sponsors` |
+| Lifecycle job: renewal invoices 7 days ahead, 14-day grace, then past due (Free limits); lapsed sponsorships end | ✅ | daily cron `/api/cron/subscriptions` |
+| Plan limits: active-student cap enforced in the database | ✅ | staff cap shown, not enforced |
+| Revenue overview, subscriptions and invoices lists | ✅ | `/platform/subscriptions` |
+| Support tickets: any signed-in user; school admins see their school's; internal staff notes; assignment; data-protection requests flagged | ✅ | `/app/support`, `/platform/support` |
+| National analytics: aggregate-only, groups under 3 schools suppressed, CSV export (audited) | ✅ | `/platform/analytics` |
+| Platform settings (registration open/closed) and integration status | ✅ | `/platform/settings` |
+| Public school directory | ✅ | built in Phase 1 (`/schools`) |
+| Hubtel as a payment provider; public API / third-party integrations | ⏳ | later — Paystack covers MoMo and cards today |
+| Verified against live Supabase and Paystack | ⏳ | needs keys |
 
 ## Phase 7 — Production readiness ⏳
 Security audit, performance, E2E tests (Playwright), backups/DR runbook, deployment, API/admin/user docs.

@@ -16,6 +16,8 @@ export type PlatformPermission =
 
 export type SchoolPermission =
   | "school.dashboard"
+  | "billing.manage"
+  | "support.request"
   | "school.settings.manage"
   | "school.branding.manage"
   | "members.read"

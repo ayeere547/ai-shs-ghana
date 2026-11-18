@@ -118,6 +118,21 @@ RPCs: `generate_term_invoices`, `add_invoice_line`, `cancel_invoice`, `record_pa
 `create_payment_intent`, `complete_online_payment` (service role), `set_payment_settings` (platform),
 `guardian_children`, `guardian_child_summary`.
 
+## Phase 6 tables (implemented — `20261122000001_national_platform.sql`)
+
+| Table | Notes |
+|---|---|
+| `sponsors` | platform finance staff only |
+| `sponsorships` | one active per school; covers a % of one plan; school billing staff can read their own |
+| `subscription_invoices` | `amount_due = list_amount − sponsor_amount`; one open invoice per school; written only by RPCs |
+| `subscription_payment_intents` | Paystack references `AISHS-SUB-…`; completed by the server only |
+| `support_tickets`, `support_messages` | requester, the school's administrators and support staff; internal notes visible to support staff only |
+
+RPCs: `request_subscription`, `void_subscription_invoice`, `record_subscription_payment`, `assign_plan`, `set_sponsorship`,
+`end_sponsorship`, `create_subscription_intent`, `complete_subscription_payment` (service role), `subscription_lifecycle`
+(service role), `school_billing_summary`, `open_support_ticket`, `reply_support_ticket`, `update_support_ticket`,
+`national_analytics`, `platform_revenue`. Trigger `students_plan_limit` enforces the active-student cap.
+
 ## Planned tables by phase
 
 | Phase | Tables |
@@ -125,7 +140,7 @@ RPCs: `generate_term_invoices`, `add_invoice_line`, `cancel_invoice`, `record_pa
 | 3 Learning (deferred) | `digital_courses`, `course_modules`, `lessons`, `learning_progress` (structured courses — later) |
 | 4 AI (deferred) | `study_plans` (personalised revision plans) |
 | 5 (deferred) | `school_events`, `school_clubs`, `school_sports`, `school_vehicles`, labs |
-| 6 National | `payments` (subscription), `support_tickets`, `support_requests`, invoices, integrations |
+| 6 (deferred) | integrations / public API keys |
 
 ## Tenant extraction
 

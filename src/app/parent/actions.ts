@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { publicEnv } from "@/lib/env";
 import { confirmPaystackReference } from "@/lib/payments/complete";
-import { initializeTransaction, isPaystackConfigured } from "@/lib/payments/paystack";
+import { initializeTransaction, isPaystackCheckoutUrl, isPaystackConfigured } from "@/lib/payments/paystack";
 import { requireChild } from "@/lib/parent";
 import { createClient } from "@/lib/supabase/server";
 import type { FormState } from "@/lib/validation/auth";
@@ -41,7 +41,7 @@ export async function startOnlinePayment(_prev: FormState, formData: FormData): 
   } catch (e) {
     return { ok: false, message: (e as Error).message };
   }
-  if (!/^https:\/\/([a-z0-9-]+\.)*paystack\.(com|co)\//i.test(url)) return { ok: false, message: "Unexpected payment page. Please try again." };
+  if (!isPaystackCheckoutUrl(url)) return { ok: false, message: "Unexpected payment page. Please try again." };
   redirect(url);
 }
 

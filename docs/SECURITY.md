@@ -59,6 +59,20 @@ the Data Protection Commission as a data controller/processor.
 * **Notifications:** email/SMS go through a server-only outbox; users choose channels; SMS text is
   short and avoids sensitive detail (it links back to the app).
 
+## National platform (Phase 6)
+
+* **Subscription payments** follow the same rule as fees: the browser never activates a plan. Paystack
+  references are re-verified server-side; completion is idempotent, service-role only, and a payment that
+  can't be applied (wrong amount, invoice no longer open) is logged for follow-up instead of being lost.
+* **Billing data** is visible to the school's billing roles and platform finance staff only. Every plan,
+  price, sponsorship and assignment change is audited.
+* **National analytics** are aggregate-only security-definer functions. Any group of fewer than 3 schools is
+  suppressed, sample schools are excluded, and CSV exports are logged. Platform staff never get row access
+  to schools' student records.
+* **Support:** internal notes are hidden from requesters by RLS; support staff can see requesters' names and
+  emails only. Data-protection (Act 843) requests are flagged so staff verify identity before acting.
+* **Lapsed payment never deletes data** — the school falls back to Free limits (no new admissions over the cap, no AI).
+
 ## Operational
 
 * Backups: Supabase daily backups + PITR on the paid tier; restore runbook in Phase 7.

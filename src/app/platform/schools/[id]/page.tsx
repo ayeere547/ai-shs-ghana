@@ -16,6 +16,8 @@ import { formatDate } from "@/lib/utils";
 import { SubmitButton } from "@/components/ui/confirm-submit";
 import { Input } from "@/components/ui/primitives";
 
+import { SubscriptionPanel } from "@/components/platform/subscription-panel";
+
 import { DecisionPanel } from "./decision-panel";
 
 async function setPaymentSettings(formData: FormData) {
@@ -148,6 +150,7 @@ export default async function PlatformSchool({ params }: { params: Promise<{ id:
               <p className="mt-3 text-xs text-muted-foreground">Onboarding: {s.onboarding_completed_at ? `completed ${formatDate(s.onboarding_completed_at)}` : "in progress"}</p>
             </CardBody>
           </Card>
+          {canPlatform(session, "subscriptions.manage") && s.status !== "pending_verification" && s.status !== "rejected" && <SubscriptionPanel schoolId={s.id} />}
           {paySettings !== undefined && s.status === "active" && (
             <Card>
               <CardHeader title="Online fee payments" description="Paystack subaccount that receives this school's online fee payments." />

@@ -1,6 +1,6 @@
 import type { PlatformPermission, SchoolPermission } from "@/lib/auth/permissions";
 
-export const CURRENT_PHASE = 5;
+export const CURRENT_PHASE = 6;
 
 export type NavItem = { label: string; href: string; icon: string; phase: number };
 export type NavSection = { title: string; items: NavItem[] };
@@ -17,13 +17,21 @@ const PLATFORM_NAV: { title: string; items: Gated<PlatformPermission>[] }[] = [
       { label: "Audit log", href: "/platform/audit", icon: "ScrollText", phase: 1, permission: "platform.audit.read" },
       { label: "AI usage", href: "/platform/ai-usage", icon: "Sparkles", phase: 4, permission: "analytics.national" },
       { label: "Shared knowledge", href: "/platform/knowledge", icon: "BookOpen", phase: 4, permission: "content.manage" },
+      { label: "National analytics", href: "/platform/analytics", icon: "BarChart3", phase: 6, permission: "analytics.national" },
+      { label: "Support", href: "/platform/support", icon: "LifeBuoy", phase: 6, permission: "support.manage" },
     ],
   },
   {
-    title: "Coming next",
+    title: "Billing",
     items: [
       { label: "Subscriptions", href: "/platform/subscriptions", icon: "CreditCard", phase: 6, permission: "subscriptions.manage" },
-      { label: "Support", href: "/platform/support", icon: "LifeBuoy", phase: 6, permission: "support.manage" },
+      { label: "Plans", href: "/platform/plans", icon: "ListChecks", phase: 6, permission: "plans.manage" },
+    ],
+  },
+  {
+    title: "Administration",
+    items: [
+      { label: "Platform settings", href: "/platform/settings", icon: "Settings", phase: 6, permission: "platform.settings.manage" },
     ],
   },
 ];
@@ -93,12 +101,9 @@ const SCHOOL_NAV: { title: string; items: SchoolGated[] }[] = [
     title: "Administration",
     items: [
       { label: "Settings", href: "/school/settings", icon: "Settings", phase: 1, permission: "school.settings.manage" },
+      { label: "Billing & plan", href: "/school/billing", icon: "CreditCard", phase: 6, permission: "billing.manage" },
+      { label: "Help & support", href: "/app/support", icon: "LifeBuoy", phase: 6, permission: "support.request" },
       { label: "Audit log", href: "/school/audit", icon: "ScrollText", phase: 1, permission: "school.audit.read" },
-    ],
-  },
-  {
-    title: "Coming next",
-    items: [
     ],
   },
 ];

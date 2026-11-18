@@ -31,3 +31,23 @@ export async function confirmPaystackReference(reference: string): Promise<"succ
   });
   return "succeeded";
 }
+
+/** Same for platform subscription payments (references start with AISHS-SUB-). */
+export async function confirmSubscriptionReference(reference: string): Promise<"succeeded" | "pending" | "failed"> {
+  const admin = createAdminClient();
+  const { data: intent } = await admin.from("subscription_payment_intents").select("id, status").eq("reference", reference).maybeSingle();
+  if (!intent) return "failed";
+  if (intent.status === "succeeded") return "succeeded";
+  if (intent.status === "failed") return "failed";
+  const v = await verifyTransaction(reference);
+  if (!v.ok) {
+    if (["failed", "abandoned", "reversed"].includes(v.status)) await admin.from("subscription_payment_intents").update({ status: v.status === "abandoned" ? "abandoned" : "failed" }).eq("id", intent.id);
+    return v.status === "ongoing" || v.status === "pending" ? "pending" : "failed";
+  }
+  const { data, error } = await admin.rpc("complete_subscription_payment", { p_reference: reference, p_amount: v.amountGhs, p_provider_reference: v.id });
+  return error || !data ? "failed" : "succeeded";
+}
+
+/** Routes a verified Paystack reference to fee or subscription completion. */
+export const confirmAnyReference = (reference: string) =>
+  reference.startsWith("AISHS-SUB-") ? confirmSubscriptionReference(reference) : confirmPaystackReference(reference);

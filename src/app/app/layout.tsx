@@ -9,6 +9,7 @@ const ACCOUNT_NAV = [
       { label: "Home", href: "/app", icon: "LayoutDashboard", phase: 1 },
       { label: "Register a school", href: "/register-school", icon: "School", phase: 1 },
       { label: "My account", href: "/app/account", icon: "UserRound", phase: 1 },
+      { label: "Help & support", href: "/app/support", icon: "LifeBuoy", phase: 6 },
     ],
   },
 ];

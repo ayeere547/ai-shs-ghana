@@ -25,8 +25,9 @@ export default async function PricingPage() {
     <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Pricing</h1>
       <p className="mt-3 max-w-2xl text-muted-foreground">
-        Every school starts free. Paid plans unlock as features ship. Because public schools are funded differently, we also support sponsored,
-        institution-funded and subsidised plans — <Link href="/contact" className="font-medium text-royal hover:underline">talk to us</Link>.
+        Every school starts free. After verification, school administrators can upgrade under Billing &amp; plan and pay by Mobile Money or card.
+        Because public schools are funded differently, plans can also be sponsored (for example by alumni or an NGO), subsidised or
+        institution-funded — <Link href="/contact" className="font-medium text-royal hover:underline">talk to us</Link>.
       </p>
 
       {plans.length === 0 ? (
@@ -49,15 +50,15 @@ export default async function PricingPage() {
                     <li key={f} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden />{f}</li>
                   ))}
                 </ul>
-                <Link href={p.code === "free" ? "/register" : "/contact"} className={buttonClass(featured ? "primary" : "secondary", "md", "mt-6")}>
-                  {p.code === "free" ? "Register free" : "Talk to us"}
+                <Link href={p.code === "free" || p.price_monthly_ghs != null || p.price_annual_ghs != null ? "/register" : "/contact"} className={buttonClass(featured ? "primary" : "secondary", "md", "mt-6")}>
+                  {p.code === "free" ? "Register free" : p.price_monthly_ghs != null || p.price_annual_ghs != null ? "Start free, upgrade later" : "Talk to us"}
                 </Link>
               </div>
             );
           })}
         </div>
       )}
-      <p className="mt-8 text-xs text-muted-foreground">Prices in Ghana cedis. AI features and online payments (Paystack / Hubtel) are rolling out in later development phases; paid plans are arranged directly with our team until then.</p>
+      <p className="mt-8 text-xs text-muted-foreground">Prices in Ghana cedis. Plans without a listed price are arranged directly with our team. Payments are processed by Paystack.</p>
     </div>
   );
 }

@@ -22,15 +22,17 @@ export function verifySignature(rawBody: string, signature: string | null, secre
 }
 
 export async function initializeTransaction(
-  opts: { email: string; amountGhs: number; reference: string; subaccount: string; callbackUrl: string; metadata: Record<string, unknown> },
+  opts: { email: string; amountGhs: number; reference: string; subaccount?: string; callbackUrl: string; metadata: Record<string, unknown> },
   fetchImpl: FetchLike = fetch,
 ): Promise<{ authorizationUrl: string }> {
   const res = await fetchImpl(`${API}/transaction/initialize`, {
     method: "POST",
     headers: { Authorization: `Bearer ${paystackKey()}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      email: opts.email, amount: toPesewas(opts.amountGhs), currency: "GHS", reference: opts.reference, subaccount: opts.subaccount,
-      bearer: "subaccount", callback_url: opts.callbackUrl, metadata: opts.metadata, channels: ["mobile_money", "card", "bank"],
+      email: opts.email, amount: toPesewas(opts.amountGhs), currency: "GHS", reference: opts.reference,
+      // School fees settle to the school's subaccount; platform subscriptions settle to the platform account.
+      ...(opts.subaccount ? { subaccount: opts.subaccount, bearer: "subaccount" } : {}),
+      callback_url: opts.callbackUrl, metadata: opts.metadata, channels: ["mobile_money", "card", "bank"],
     }),
   });
   const body = (await res.json().catch(() => ({}))) as { status?: boolean; data?: { authorization_url?: string }; message?: string };
@@ -47,3 +49,6 @@ export async function verifyTransaction(reference: string, fetchImpl: FetchLike 
   if (!res.ok || !body.status || !d) return { ok: false, status: "unknown", amountGhs: 0, currency: "", id: "", reference };
   return { ok: d.status === "success" && d.currency === "GHS" && d.reference === reference, status: d.status, amountGhs: fromPesewas(d.amount), currency: d.currency, id: String(d.id), reference: d.reference };
 }
+
+/** Paystack checkout pages are always on paystack.com / paystack.co. */
+export const isPaystackCheckoutUrl = (url: string) => /^https:\/\/([a-z0-9-]+\.)*paystack\.(com|co)\//i.test(url);

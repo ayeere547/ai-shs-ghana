@@ -26,7 +26,7 @@ export function integrationStatus() {
     { key: "openai", name: "AI provider (tutor, teacher tools, smart search)", required: false, configured: Boolean(env.openaiApiKey), envVars: ["OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_MODEL", "OPENAI_EMBEDDING_MODEL"] },
     { key: "email", name: "Email notifications (Resend)", required: false, configured: Boolean(env.resendApiKey), envVars: ["RESEND_API_KEY", "EMAIL_FROM"] },
     { key: "sms", name: "SMS notifications (Arkesel / Hubtel)", required: false, configured: Boolean(env.smsApiKey), envVars: ["SMS_PROVIDER", "SMS_API_KEY", "SMS_SENDER_ID"] },
-    { key: "cron", name: "Notification delivery schedule", required: false, configured: Boolean(process.env.CRON_SECRET), envVars: ["CRON_SECRET"] },
-    { key: "payments", name: "Online fee payments (Paystack)", required: false, configured: Boolean(env.paystackSecretKey), envVars: ["PAYSTACK_SECRET_KEY"] },
+    { key: "cron", name: "Scheduled jobs (notifications, subscription renewals)", required: false, configured: Boolean(process.env.CRON_SECRET), envVars: ["CRON_SECRET"] },
+    { key: "payments", name: "Online payments — school fees and subscriptions (Paystack)", required: false, configured: Boolean(env.paystackSecretKey), envVars: ["PAYSTACK_SECRET_KEY"] },
   ];
 }
